@@ -3,5 +3,8 @@
   "workbench.colorCustomizations": {
     "activityBar.background": "#81742c",
     "statusBar.background": "#81742c"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
   }
 }
