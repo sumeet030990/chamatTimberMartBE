@@ -1,0 +1,6 @@
+{
+  "APP_URL": "",
+  "FE_URL": "",
+  "PORT": 8080,
+  "APP_ENV": "STAGE"
+}
