@@ -33,5 +33,11 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.7",
     "rimraf": "^4.4.1"
+  },
+  "lint-staged": {
+    "**/*.{js, jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
