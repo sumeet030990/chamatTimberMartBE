@@ -2,15 +2,16 @@
   "name": "backend",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "nodemon dist/bin/www",
     "start": "npm run build && node dist/bin/www",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "format": "eslint --fix ./*.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@prisma/client": "^4.12.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -32,6 +33,7 @@
     "lint-staged": "^13.2.0",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.7",
+    "prisma": "^4.12.0",
     "rimraf": "^4.4.1"
   },
   "lint-staged": {

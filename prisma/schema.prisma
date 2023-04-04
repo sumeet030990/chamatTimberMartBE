@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model languages {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(20)
+  code  String  @unique @db.VarChar(5)
+  users users[]
+}
+
+model roles {
+  id    Int     @id @default(autoincrement())
+  name  String
+  slug  String  @unique
+  users users[]
+}
+
+enum account_name {
+  current
+  savings
+  salary
+}
+
+model user_bank_details {
+  id             Int           @id @default(autoincrement())
+  users_id       Int
+  user           users         @relation(fields: [users_id], references: [id])
+  account_name   String
+  account_number String        @db.VarChar(20)
+  bank_name      String        @db.VarChar(50)
+  ifsc_code      String        @db.VarChar(20)
+  account_type   account_name?
+}
+
+model company {
+  id                 Int             @id @default(autoincrement())
+  name               String          @db.VarChar(50)
+  allow_billing      Boolean         @default(true)
+  allow_gst_billing  Boolean         @default(false)
+  primary_contact    String          @db.VarChar(15)
+  secondary_contact  String?         @db.VarChar(15)
+  logo_url           String?
+  gst_no             String?
+  gst_tax_percentage Int?
+  address            String?
+  country_id         Int?
+  country_name       String?
+  state_id           Int?
+  state_name         String?
+  city_id            Int?
+  city_name          String?
+  pin_code           Int?
+  users_company      users_company[]
+}
+
+enum gst_type {
+  unregistered
+  registered_business_regular
+  registered_business_composition
+}
+
+model users {
+  id                         Int       @id @default(autoincrement())
+  name                       String    @db.VarChar(50)
+  allow_login                Boolean   @default(true)
+  user_name                  String?   @unique @db.VarChar(50)
+  password                   String?
+  user_role_id               Int
+  user_role                  roles     @relation(fields: [user_role_id], references: [id])
+  language_id                Int
+  preffered_language         languages @relation(fields: [language_id], references: [id])
+  primary_contact            String?   @db.VarChar(15)
+  secondary_contact          String?   @db.VarChar(15)
+  date_of_birth              DateTime?
+  anniversary_date           DateTime?
+  gst_no                     String?
+  gst_type                   gst_type?
+  address                    String?
+  country_id                 Int?
+  country_name               String?   @db.VarChar(50)
+  state_id                   Int?
+  state_name                 String?   @db.VarChar(50)
+  city_id                    Int?
+  city_name                  String?   @db.VarChar(50)
+  pin_code                   String?   @db.VarChar(10)
+  //created_timestamp
+  created_at                 DateTime  @default(now())
+  created_by                 Int
+  created_by_user            users     @relation("create_user_self_relation", fields: [created_by], references: [id]) // Step 2. Use the realtionship name
+  create_user_self_relation  users[]   @relation("create_user_self_relation") // Step 1. Define name of relationship for created_by field
+  //updated_timestamp
+  updated_at                 DateTime?
+  updated_by                 Int?
+  updated_by_user            users?    @relation("update_user_self_relation", fields: [updated_by], references: [id])
+  update_user_self_relation  users[]   @relation("update_user_self_relation")
+  //deleted_timestamp
+  deleted_at                 DateTime?
+  deleted_by                 Int?
+  deleted_by_user            users?    @relation("deleted_user_self_relation", fields: [deleted_by], references: [id])
+  deleted_user_self_relation users[]   @relation("deleted_user_self_relation")
+
+  user_bank_details    user_bank_details[]
+  todo_task_user       todo[]              @relation("todo_task_user")
+  todo_created_by_user todo[]              @relation("todo_created_by_user")
+  users_company        users_company[]
+}
+
+model users_company {
+  id         Int     @id @default(autoincrement())
+  user_id    Int
+  users      users   @relation(fields: [user_id], references: [id])
+  company_id Int
+  company    company @relation(fields: [company_id], references: [id])
+}
+
+model todo {
+  id               Int    @id @default(autoincrement())
+  name             String
+  task_for_user_id Int
+  taskUser         users? @relation("todo_task_user", fields: [task_for_user_id], references: [id])
+
+  created_at      DateTime @default(now())
+  created_by_user Int
+  createdByUser   users    @relation("todo_created_by_user", fields: [created_by_user], references: [id])
+}
+
+model Item {
+  id        Int    @id @default(autoincrement())
+  name      String @db.VarChar(20)
+  item_code String @db.VarChar(20)
+}
