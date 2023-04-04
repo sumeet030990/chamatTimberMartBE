@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon dist/bin/www",
+    "dev": "npx nodemon app.js -e js,ejs,html,css",
     "start": "npm run build && node dist/bin/www",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "format": "eslint --fix ./*.js",
@@ -14,6 +14,7 @@
     "@prisma/client": "^4.12.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "mkdirp": "^2.1.6",
     "morgan": "~1.9.1"
@@ -37,7 +38,7 @@
     "rimraf": "^4.4.1"
   },
   "lint-staged": {
-    "**/*.{js, jsx}": [
+    "**/*.{js}": [
       "eslint --fix",
       "prettier --write"
     ]
