@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "export NODE_ENV=localhost && nodemon src/index.ts",
-    "build": "tsc -p .",
+    "build": "npm install && tsc -p .",
     "prepare": "husky install",
     "lint": "eslint . --ext .ts --ext .js",
     "lint:fix": "eslint --fix . --ext .ts --ext .js"
