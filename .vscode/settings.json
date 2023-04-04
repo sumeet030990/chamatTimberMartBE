@@ -1,6 +1,10 @@
 {
+  "editor.formatOnSave": true,
   "workbench.colorCustomizations": {
-    "activityBar.background": "#14b197",
-    "statusBar.background": "#333"
+    "activityBar.background": "#81742c",
+    "statusBar.background": "#81742c"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
   }
 }
