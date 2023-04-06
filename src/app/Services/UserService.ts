@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { fetchQueryParamsType } from '../../types/commons';
+import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
 import UserRepository from '../Repositories/UserRepository';
 
 /**
@@ -18,8 +19,8 @@ const fetchAllUsers = (reqQuery: fetchQueryParamsType) => {
  *
  * @returns Collection
  */
-const fetchUserByUserName = (userName: string, selfUserId: string = '') => {
-  return UserRepository.fetchUserByUserName(userName, selfUserId);
+const fetchUserByUserName = (userName: string, otherfilterParams: fetchUserByUserNameFilterParams = {}) => {
+  return UserRepository.fetchUserByUserName(userName, otherfilterParams);
 };
 
 /**

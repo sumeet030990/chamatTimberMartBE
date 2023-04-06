@@ -1,6 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
+import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
+import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
 
 const prisma = new PrismaClient();
 
@@ -47,14 +49,18 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
  * @param userName
  * @returns
  */
-const fetchUserByUserName = async (userName: string, selfUserId: string = '') => {
+const fetchUserByUserName = async (userName: string, otherfilterParams?: fetchUserByUserNameFilterParams) => {
   try {
     const excludeSelfUser: any = {};
-
-    if (selfUserId !== '') {
+    const { selfUserId, allowLogin }: any = otherfilterParams;
+    if (!isUndefined(selfUserId)) {
       excludeSelfUser.id = {
         not: Number(selfUserId),
       };
+    }
+
+    if (!isUndefined(allowLogin)) {
+      excludeSelfUser.allow_login = true;
     }
 
     const result = await prisma.users.findFirst({

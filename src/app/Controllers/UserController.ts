@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/UserFormValidator';
+import AuthService from '../Services/AuthService';
 import UserService from '../Services/UserService';
 
 const index = async (req: Request, res: Response, next: any) => {
@@ -30,6 +31,9 @@ const store = async (req: Request, res: Response, next: any) => {
     const userData = await UserService.fetchUserByUserName(user_name);
     if (userData) throw new createHttpError.UnprocessableEntity('User with same login already been registered');
 
+    validationResult.password = await AuthService.hashedPassword(validationResult.password);
+    validationResult.created_by = 1;
+
     // save user data
     const savedUser = await UserService.storeUser(validationResult);
 
@@ -51,7 +55,7 @@ const update = async (req: Request, res: Response, next: any) => {
     const validateData = await updateRequest.validateAsync(body);
     const { user_name } = validateData; // ll provide sanitized data after validation
 
-    const userData = await UserService.fetchUserByUserName(user_name, params.id);
+    const userData = await UserService.fetchUserByUserName(user_name, { selfUserId: parseInt(params.id) });
     if (userData) throw new createHttpError.UnprocessableEntity('User with same login already been registered');
 
     const updateUser = await UserService.updateUser(params.id, validateData);

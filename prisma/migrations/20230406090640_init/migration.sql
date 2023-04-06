@@ -61,13 +61,14 @@ CREATE TABLE `users` (
     `allow_login` BOOLEAN NOT NULL DEFAULT true,
     `user_name` VARCHAR(50) NULL,
     `password` VARCHAR(191) NULL,
+    `email_id` VARCHAR(100) NULL,
     `user_role_id` INTEGER NOT NULL,
     `language_id` INTEGER NOT NULL,
     `primary_contact` VARCHAR(15) NULL,
     `secondary_contact` VARCHAR(15) NULL,
     `date_of_birth` DATETIME(3) NULL,
     `anniversary_date` DATETIME(3) NULL,
-    `gst_no` VARCHAR(191) NULL,
+    `gst_no` VARCHAR(30) NULL,
     `gst_type` ENUM('unregistered', 'registered_business_regular', 'registered_business_composition') NULL,
     `address` VARCHAR(191) NULL,
     `country_id` INTEGER NULL,
@@ -76,7 +77,7 @@ CREATE TABLE `users` (
     `state_name` VARCHAR(50) NULL,
     `city_id` INTEGER NULL,
     `city_name` VARCHAR(50) NULL,
-    `pin_code` VARCHAR(10) NULL,
+    `pin_code` VARCHAR(20) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_by` INTEGER NOT NULL,
     `updated_at` DATETIME(3) NULL,
@@ -85,6 +86,7 @@ CREATE TABLE `users` (
     `deleted_by` INTEGER NULL,
 
     UNIQUE INDEX `users_user_name_key`(`user_name`),
+    UNIQUE INDEX `users_email_id_key`(`email_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

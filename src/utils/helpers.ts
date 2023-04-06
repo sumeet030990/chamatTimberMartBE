@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import { PAGE_SIZE } from './constant';
 
 /**
@@ -85,4 +85,15 @@ const resetPagination = (queryString: any) => {
   };
 };
 
-export { successResponse, errorResponse, getIndexPageQueryParams, resetPagination };
+/**
+ * In models we have created an array named protected
+ * with this method we can remove those filds from the object
+ * @param data
+ * @param protectedFields
+ * @returns
+ */
+const removeProtectedFieldsFromData = (data: any, protectedFields: string[]) => {
+  return omit({ ...data }, protectedFields); // remove protected fields from user data
+};
+
+export { successResponse, errorResponse, getIndexPageQueryParams, resetPagination, removeProtectedFieldsFromData };
