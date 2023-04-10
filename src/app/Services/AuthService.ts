@@ -58,8 +58,20 @@ const createAccessToken = (userData: any): Promise<string | undefined> => {
     }
   });
 };
+
+const verifyAccessToken = (token: string) => {
+  try {
+    const publicKey = fs.readFileSync(`${fileDir}/id_rsa_pub.pem`, { encoding: 'utf8' });
+    const payload = jwt.verify(token, publicKey, { algorithms: ['RS256'] });
+
+    return payload;
+  } catch (error) {
+    throw new createHttpError.Unauthorized();
+  }
+};
 export default {
   hashedPassword,
   verifyPassword,
   createAccessToken,
+  verifyAccessToken,
 };

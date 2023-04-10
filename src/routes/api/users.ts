@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import UserController from '../../app/Controllers/UserController';
+import protectedRoutes from '../../app/Middlewares/protectedRouteMiddleware';
 
 const router = Router();
 
-router.get('', [], UserController.index);
+router.get('', [protectedRoutes], UserController.index);
 router.post('', [], UserController.store);
 router.put('/:id', [], UserController.update);
 router.delete('/:id', [], UserController.destroy);

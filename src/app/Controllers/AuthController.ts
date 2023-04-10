@@ -33,7 +33,7 @@ const generateAccessAndRefreshToken = async (userData: any) => {
 const login = async (req: Request, res: Response, next: any): Promise<Response> => {
   try {
     const validationResult = await loginRequest.validateAsync(req.body);
-    const { user_name: userName, password } = validationResult; // ll use sanitized data after validation
+    const { userName, password } = validationResult; // ll use sanitized data after validation
 
     // Find User
     const userData = await UserService.fetchUserByUserName(userName, { allowLogin: false });
@@ -41,7 +41,7 @@ const login = async (req: Request, res: Response, next: any): Promise<Response> 
 
     // Check if Password is correct
     const isValidPassword = await AuthService.verifyPassword(userData, password);
-    if (!isValidPassword) throw new createHttpError.Unauthorized('Invalid login credentials');
+    if (!isValidPassword) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Create Access and Refresh Token
     const { accessToken } = await generateAccessAndRefreshToken(userData);
