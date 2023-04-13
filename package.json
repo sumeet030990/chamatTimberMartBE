@@ -12,7 +12,7 @@
     "lint:fix": "eslint --fix . --ext .ts --ext .js",
     "db:reset": "npx prisma migrate reset",
     "db:seed": "node prisma/seed.js",
-    "db:migrate": "prisma migrate dev --name init"
+    "db:migrate": "npx prisma migrate dev --name init"
   },
   "keywords": [],
   "author": "",

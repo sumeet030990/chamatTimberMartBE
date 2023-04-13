@@ -3,6 +3,7 @@ import createHttpError from 'http-errors';
 import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
 import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
+import { removeProtectedFieldsFromData } from '../../utils/helpers';
 
 const prisma = new PrismaClient();
 
@@ -18,6 +19,16 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
       where: {
         deleted_at: null,
       },
+      select: {
+        id: true,
+        name: true,
+        allow_login: true,
+        user_role: {
+          select: {
+            name: true,
+          },
+        },
+      },
       skip: Number((pageNumber - 1) * pageSize),
       take: Number(pageSize),
       orderBy: {
@@ -28,16 +39,12 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
     const count = await prisma.users.count({});
 
     return {
+      page: pageNumber,
+      size: pageSize,
+      total_records: count,
+      total_page: Math.ceil(count / pageSize),
       data: result,
-      count,
     };
-    // return {
-    //   page: pageNumber,
-    //   size: pageSize,
-    //   total_records: count,
-    //   total_page: Math.ceil(count / pageSize),
-    //   data: result,
-    // };
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }
@@ -72,6 +79,26 @@ const fetchUserByUserName = async (userName: string, otherfilterParams?: fetchUs
     });
 
     return result;
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
+};
+
+/**
+ * Fetch Data By id
+ * @param id
+ * @returns User
+ */
+const findById = async (id: string) => {
+  try {
+    const result = await prisma.users.findFirst({
+      where: {
+        id: Number(id),
+        deleted_at: null,
+      },
+    });
+
+    return removeProtectedFieldsFromData(result, ['password']);
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }
@@ -143,6 +170,7 @@ const deleteUser = async (userId: string, loggedInUser: any = {}) => {
 };
 export default {
   fetchAllUsers,
+  findById,
   fetchUserByUserName,
   storeUser,
   updateUser,

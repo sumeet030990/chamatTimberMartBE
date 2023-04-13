@@ -24,6 +24,14 @@ const fetchUserByUserName = (userName: string, otherfilterParams: fetchUserByUse
 };
 
 /**
+ * fetch User by id
+ * @returns
+ */
+const findById = (id: string) => {
+  return UserRepository.findById(id);
+};
+
+/**
  * Store User in DB
  * @param data
  * @returns
@@ -53,6 +61,7 @@ const deleteUser = (userId: string, loggedInUser: any = {}) => {
 export default {
   fetchAllUsers,
   fetchUserByUserName,
+  findById,
   storeUser,
   updateUser,
   deleteUser,

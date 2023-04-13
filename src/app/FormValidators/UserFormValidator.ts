@@ -2,16 +2,17 @@ import Joi from 'joi';
 
 const userObject = {
   name: Joi.string().min(2).max(50).required(),
-  user_name: Joi.string().min(2).max(50).required(),
+  user_name: Joi.string().min(2).max(50).allow(''),
+  email_id: Joi.string().max(50).allow(''),
   allow_login: Joi.boolean().required(),
-  user_role_id: Joi.number().required(),
+  role_id: Joi.number().required(),
   language_id: Joi.number().required(),
-  primary_contact: Joi.string().max(20).required(),
+  primary_contact: Joi.string().max(20).allow('', null),
   secondary_contact: Joi.string().max(20).allow('', null),
-  date_of_birth: Joi.date(),
-  anniversary_date: Joi.date(),
-  gst_no: Joi.string().max(30).allow('', null),
-  gst_type: Joi.number().max(30).allow(null),
+  date_of_birth: Joi.date().allow('', null),
+  anniversary_date: Joi.date().allow('', null),
+  gst_no: Joi.string().max(30).allow(''),
+  gst_type: Joi.string().max(30).allow('', null),
   address: Joi.string().allow('', null),
   country_id: Joi.number().allow(null),
   country_name: Joi.string().max(50).allow(null),
@@ -19,7 +20,7 @@ const userObject = {
   state_name: Joi.string().max(50).allow(null),
   city_id: Joi.number().allow(null),
   city_name: Joi.string().max(50).allow(null),
-  pin_code: Joi.string().max(20).allow(null),
+  pin_code: Joi.string().max(20).allow('', null),
 };
 
 const storeRequest = Joi.object({

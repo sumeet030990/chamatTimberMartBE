@@ -17,6 +17,22 @@ const index = async (req: Request, res: Response, next: any) => {
 };
 
 /**
+ * Get Details of the User of given id
+ * @param req
+ * @param res
+ * @param next
+ */
+const show = async (req: Request, res: Response, next: any) => {
+  try {
+    const userData = await UserService.findById(req.params.id);
+
+    return res.json(successResponse(userData));
+  } catch (error: any) {
+    return next(error);
+  }
+};
+
+/**
  * Post api for Storing User in DB
  * @param req Request
  * @param res Response
@@ -87,6 +103,7 @@ const destroy = async (req: Request, res: Response, next: any): Promise<Response
 };
 export default {
   index,
+  show,
   store,
   update,
   destroy,

@@ -62,7 +62,7 @@ CREATE TABLE `users` (
     `user_name` VARCHAR(50) NULL,
     `password` VARCHAR(191) NULL,
     `email_id` VARCHAR(100) NULL,
-    `user_role_id` INTEGER NOT NULL,
+    `role_id` INTEGER NOT NULL,
     `language_id` INTEGER NOT NULL,
     `primary_contact` VARCHAR(15) NULL,
     `secondary_contact` VARCHAR(15) NULL,
@@ -86,7 +86,6 @@ CREATE TABLE `users` (
     `deleted_by` INTEGER NULL,
 
     UNIQUE INDEX `users_user_name_key`(`user_name`),
-    UNIQUE INDEX `users_email_id_key`(`email_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -123,7 +122,7 @@ CREATE TABLE `Item` (
 ALTER TABLE `user_bank_details` ADD CONSTRAINT `user_bank_details_users_id_fkey` FOREIGN KEY (`users_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `users` ADD CONSTRAINT `users_user_role_id_fkey` FOREIGN KEY (`user_role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `users` ADD CONSTRAINT `users_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `users` ADD CONSTRAINT `users_language_id_fkey` FOREIGN KEY (`language_id`) REFERENCES `languages`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
