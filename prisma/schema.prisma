@@ -52,13 +52,13 @@ model company {
   gst_no             String?
   gst_tax_percentage Int?
   address            String?
-  country_id         Int?
+  country_id         String?         @db.VarChar(5)
   country_name       String?
-  state_id           Int?
+  state_id           String?         @db.VarChar(5)
   state_name         String?
-  city_id            Int?
+  // city_id            Int?
   city_name          String?
-  pin_code           Int?
+  pin_code           String?         @db.VarChar(20)
   users_company      users_company[]
 }
 
@@ -86,9 +86,9 @@ model users {
   gst_no                     String?   @db.VarChar(30)
   gst_type                   gst_type?
   address                    String?
-  country_id                 Int?
-  country_name               String?   @db.VarChar(50)
-  state_id                   Int?
+  country_id                 String?   @db.VarChar(5)
+  country_name               String?
+  state_id                   String?   @db.VarChar(5)
   state_name                 String?   @db.VarChar(50)
   city_id                    Int?
   city_name                  String?   @db.VarChar(50)
@@ -116,11 +116,12 @@ model users {
 }
 
 model users_company {
-  id         Int     @id @default(autoincrement())
   user_id    Int
   users      users   @relation(fields: [user_id], references: [id])
   company_id Int
   company    company @relation(fields: [company_id], references: [id])
+
+   @@id([user_id, company_id])
 }
 
 model todo {

@@ -76,6 +76,9 @@ const fetchUserByUserName = async (userName: string, otherfilterParams?: fetchUs
         deleted_at: null,
         ...excludeSelfUser,
       },
+      include: {
+        preffered_language: true,
+      },
     });
 
     return result;
@@ -95,6 +98,18 @@ const findById = async (id: string) => {
       where: {
         id: Number(id),
         deleted_at: null,
+      },
+      include: {
+        users_company: {
+          select: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 

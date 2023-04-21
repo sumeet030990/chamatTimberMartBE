@@ -3,6 +3,7 @@ import createHttpError from 'http-errors';
 import { successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/UserFormValidator';
 import AuthService from '../Services/AuthService';
+import UserCompanyService from '../Services/UserCompanyService';
 import UserService from '../Services/UserService';
 
 const index = async (req: Request, res: Response, next: any) => {
@@ -41,19 +42,31 @@ const show = async (req: Request, res: Response, next: any) => {
  */
 const store = async (req: Request, res: Response, next: any) => {
   try {
-    const validationResult = await storeRequest.validateAsync(req.body);
+    const { headers, body } = req;
+
+    const validationResult = await storeRequest.validateAsync(body);
     const { user_name } = validationResult; // ll provide sanitized data after validation
 
     const userData = await UserService.fetchUserByUserName(user_name);
     if (userData) throw new createHttpError.UnprocessableEntity('User with same login already been registered');
 
     validationResult.password = await AuthService.hashedPassword(validationResult.password);
-    validationResult.created_by = 1;
+    if (headers.authorization) {
+      const loggingUser: any = AuthService.verifyAccessToken(headers.authorization);
+      validationResult.created_by = loggingUser.userData.id;
+    }
 
+    // company Data
+    const companyData = validationResult.companies;
+    delete validationResult.companies;
     // save user data
     const savedUser = await UserService.storeUser(validationResult);
+    let companyUserMapping: any = [];
+    if (companyData && savedUser) {
+      companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, savedUser);
+    }
 
-    return res.json(successResponse({ savedUser }));
+    return res.json(successResponse({ savedUser, companyUserMapping }));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
   }
@@ -74,9 +87,17 @@ const update = async (req: Request, res: Response, next: any) => {
     const userData = await UserService.fetchUserByUserName(user_name, { selfUserId: parseInt(params.id) });
     if (userData) throw new createHttpError.UnprocessableEntity('User with same login already been registered');
 
-    const updateUser = await UserService.updateUser(params.id, validateData);
+    // company Data
+    const companyData = validateData.companies;
+    delete validateData.companies;
 
-    return res.json(successResponse(updateUser));
+    const updateUser = await UserService.updateUser(params.id, validateData);
+    let companyUserMapping: any = [];
+    if (companyData && updateUser) {
+      companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, updateUser);
+    }
+
+    return res.json(successResponse(updateUser, companyUserMapping));
   } catch (error: any) {
     next(error);
   }

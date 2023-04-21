@@ -6,8 +6,8 @@ const router = Router();
 
 router.get('', [protectedRoutes], UserController.index);
 router.get('/:id', [protectedRoutes], UserController.show);
-router.post('', [], UserController.store);
-router.put('/:id', [], UserController.update);
-router.delete('/:id', [], UserController.destroy);
+router.post('', [protectedRoutes], UserController.store);
+router.put('/:id', [protectedRoutes], UserController.update);
+router.delete('/:id', [protectedRoutes], UserController.destroy);
 
 export default router;

@@ -1,18 +1,14 @@
 import Joi from 'joi';
 
-const userObject = {
+const companyObject = {
   name: Joi.string().min(2).max(50).required(),
-  user_name: Joi.string().min(2).max(50).allow(''),
-  email_id: Joi.string().max(50).allow(''),
-  allow_login: Joi.boolean().required(),
-  role_id: Joi.number().required(),
-  language_id: Joi.number().required(),
+  allow_billing: Joi.boolean().required(),
+  allow_gst_billing: Joi.boolean().required(),
   primary_contact: Joi.string().max(20).allow('', null),
   secondary_contact: Joi.string().max(20).allow('', null),
-  date_of_birth: Joi.date().allow('', null),
-  anniversary_date: Joi.date().allow('', null),
+  logo_url: Joi.string().allow('', null),
   gst_no: Joi.string().max(30).allow(''),
-  gst_type: Joi.string().max(30).allow('', null),
+  gst_tax_percentage: Joi.number().allow('', null),
   address: Joi.string().allow('', null),
   country_id: Joi.string().allow('', null),
   country_name: Joi.string().max(50).allow('', null),
@@ -20,19 +16,14 @@ const userObject = {
   state_name: Joi.string().max(50).allow('', null),
   city_name: Joi.string().max(50).allow('', null),
   pin_code: Joi.string().max(20).allow('', null),
-  companies: Joi.array().min(1),
 };
 
 const storeRequest = Joi.object({
-  ...userObject,
-  password: Joi.string().min(3).max(50).required(),
+  ...companyObject,
 }).options({ abortEarly: false });
 
 const updateRequest = Joi.object({
-  ...userObject,
+  ...companyObject,
 }).options({ abortEarly: false });
 
-const updatePasswordRequest = Joi.object({
-  password: Joi.string().min(3).max(20),
-});
-export { storeRequest, updateRequest, updatePasswordRequest };
+export { storeRequest, updateRequest };

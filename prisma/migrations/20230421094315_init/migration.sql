@@ -43,13 +43,12 @@ CREATE TABLE `company` (
     `gst_no` VARCHAR(191) NULL,
     `gst_tax_percentage` INTEGER NULL,
     `address` VARCHAR(191) NULL,
-    `country_id` INTEGER NULL,
+    `country_id` VARCHAR(5) NULL,
     `country_name` VARCHAR(191) NULL,
-    `state_id` INTEGER NULL,
+    `state_id` VARCHAR(5) NULL,
     `state_name` VARCHAR(191) NULL,
-    `city_id` INTEGER NULL,
     `city_name` VARCHAR(191) NULL,
-    `pin_code` INTEGER NULL,
+    `pin_code` VARCHAR(20) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -71,9 +70,9 @@ CREATE TABLE `users` (
     `gst_no` VARCHAR(30) NULL,
     `gst_type` ENUM('unregistered', 'registered_business_regular', 'registered_business_composition') NULL,
     `address` VARCHAR(191) NULL,
-    `country_id` INTEGER NULL,
-    `country_name` VARCHAR(50) NULL,
-    `state_id` INTEGER NULL,
+    `country_id` VARCHAR(5) NULL,
+    `country_name` VARCHAR(191) NULL,
+    `state_id` VARCHAR(5) NULL,
     `state_name` VARCHAR(50) NULL,
     `city_id` INTEGER NULL,
     `city_name` VARCHAR(50) NULL,
@@ -91,11 +90,10 @@ CREATE TABLE `users` (
 
 -- CreateTable
 CREATE TABLE `users_company` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `company_id` INTEGER NOT NULL,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`user_id`, `company_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable

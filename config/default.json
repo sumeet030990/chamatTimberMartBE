@@ -1,4 +1,6 @@
 {
   "PORT": 9000,
-  "APP_NAME": "Chamat Timber Mart"
+  "APP_NAME": "Chamat Timber Mart",
+  "LOCATION_API_URL": "https://api.countrystatecity.in/v1",
+  "LOCATION_API_KEY": "R2tLSUdHWUFGZ0xzbGcxcTh5WUw5WXZiSG5ZVTNUdHJ4OWZoZnJIbA=="
 }

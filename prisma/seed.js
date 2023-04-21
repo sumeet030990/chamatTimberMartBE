@@ -15,13 +15,12 @@ async function main() {
       gst_no: '11111111',
       gst_tax_percentage: 18,
       address: 'Queta Colony',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
-      pin_code: 440008,
+      pin_code: '440008',
     },
   });
 
@@ -36,13 +35,12 @@ async function main() {
       gst_no: '22222222',
       gst_tax_percentage: 18,
       address: 'Queta Colony',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
-      pin_code: 440008,
+      pin_code: '440008',
     },
   });
 
@@ -132,11 +130,10 @@ async function main() {
       role_id: 1,
       language_id: 1,
       primary_contact: '8408880505',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
       pin_code: '440008',
       created_by: 1,
@@ -154,11 +151,10 @@ async function main() {
       role_id: 1,
       language_id: 1,
       primary_contact: '9595109394',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
       pin_code: '440008',
       created_by: 1,
@@ -176,11 +172,10 @@ async function main() {
       role_id: 3,
       language_id: 1,
       primary_contact: '0123456789',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
       pin_code: '440008',
       created_by: 1,
@@ -198,11 +193,10 @@ async function main() {
       role_id: 4,
       language_id: 1,
       primary_contact: '0123456789',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
       pin_code: '440008',
       created_by: 1,
@@ -220,11 +214,10 @@ async function main() {
       role_id: 5,
       language_id: 1,
       primary_contact: '0123456789',
-      country_id: 101,
+      country_id: 'IN',
       country_name: 'India',
-      state_id: 4008,
+      state_id: 'MH',
       state_name: 'Maharashtra',
-      city_id: 133116,
       city_name: 'Nagpur',
       pin_code: '440008',
       created_by: 1,
@@ -232,65 +225,65 @@ async function main() {
   });
 
   // user company mapping
-  await prisma.users_company.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      user_id: 1,
-      company_id: 1,
-    },
-  });
-  await prisma.users_company.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      user_id: 1,
-      company_id: 2,
-    },
-  });
+  // await prisma.users_company.upsert({
+  //   where: { id: 1 },
+  //   update: {},
+  //   create: {
+  //     user_id: 1,
+  //     company_id: 1,
+  //   },
+  // });
+  // await prisma.users_company.upsert({
+  //   where: { id: 2 },
+  //   update: {},
+  //   create: {
+  //     user_id: 1,
+  //     company_id: 2,
+  //   },
+  // });
 
-  await prisma.users_company.upsert({
-    where: { id: 3 },
-    update: {},
-    create: {
-      user_id: 2,
-      company_id: 1,
-    },
-  });
+  // await prisma.users_company.upsert({
+  //   where: { id: 3 },
+  //   update: {},
+  //   create: {
+  //     user_id: 2,
+  //     company_id: 1,
+  //   },
+  // });
 
-  await prisma.users_company.upsert({
-    where: { id: 4 },
-    update: {},
-    create: {
-      user_id: 2,
-      company_id: 2,
-    },
-  });
+  // await prisma.users_company.upsert({
+  //   where: { id: 4 },
+  //   update: {},
+  //   create: {
+  //     user_id: 2,
+  //     company_id: 2,
+  //   },
+  // });
 
-  await prisma.users_company.upsert({
-    where: { id: 5 },
-    update: {},
-    create: {
-      user_id: 3,
-      company_id: 1,
-    },
-  });
-  await prisma.users_company.upsert({
-    where: { id: 6 },
-    update: {},
-    create: {
-      user_id: 4,
-      company_id: 1,
-    },
-  });
-  await prisma.users_company.upsert({
-    where: { id: 7 },
-    update: {},
-    create: {
-      user_id: 5,
-      company_id: 1,
-    },
-  });
+  // await prisma.users_company.upsert({
+  //   where: { id: 5 },
+  //   update: {},
+  //   create: {
+  //     user_id: 3,
+  //     company_id: 1,
+  //   },
+  // });
+  // await prisma.users_company.upsert({
+  //   where: { id: 6 },
+  //   update: {},
+  //   create: {
+  //     user_id: 4,
+  //     company_id: 1,
+  //   },
+  // });
+  // await prisma.users_company.upsert({
+  //   where: { id: 7 },
+  //   update: {},
+  //   create: {
+  //     user_id: 5,
+  //     company_id: 1,
+  //   },
+  // });
 }
 main()
   .then(async () => {

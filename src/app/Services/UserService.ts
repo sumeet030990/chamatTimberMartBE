@@ -27,8 +27,19 @@ const fetchUserByUserName = (userName: string, otherfilterParams: fetchUserByUse
  * fetch User by id
  * @returns
  */
-const findById = (id: string) => {
-  return UserRepository.findById(id);
+const findById = async (id: string) => {
+  const result: any = await UserRepository.findById(id);
+  if (result.users_company && result.users_company.length > 0) {
+    const data = result.users_company.map((userCompany: any) => userCompany.company);
+    result.users_company = data.map((company: any) => {
+      return {
+        value: company.id,
+        label: company.name,
+      };
+    });
+  }
+
+  return result;
 };
 
 /**
