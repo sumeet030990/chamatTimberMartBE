@@ -13,6 +13,6 @@ router.use('/users', userRoutes);
 router.use('/roles', rolesRoutes);
 router.use('/languages', languagesRoute);
 router.use('/locations', locationsRoute);
-router.use('/company', companyRoute);
+router.use('/companies', companyRoute);
 
 export default router;

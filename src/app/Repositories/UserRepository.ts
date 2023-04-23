@@ -14,10 +14,15 @@ const prisma = new PrismaClient();
  */
 const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
   try {
-    const { pageNumber, pageSize, sort_field, sort_order } = queryParams;
+    const { pageNumber, pageSize, sort_field, sort_order, selectedCompany } = queryParams;
     const result = await prisma.users.findMany({
       where: {
         deleted_at: null,
+        users_company: {
+          some: {
+            company_id: parseInt(selectedCompany),
+          },
+        },
       },
       select: {
         id: true,
@@ -78,6 +83,16 @@ const fetchUserByUserName = async (userName: string, otherfilterParams?: fetchUs
       },
       include: {
         preffered_language: true,
+        users_company: {
+          select: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 

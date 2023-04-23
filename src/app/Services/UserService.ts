@@ -19,8 +19,19 @@ const fetchAllUsers = (reqQuery: fetchQueryParamsType) => {
  *
  * @returns Collection
  */
-const fetchUserByUserName = (userName: string, otherfilterParams: fetchUserByUserNameFilterParams = {}) => {
-  return UserRepository.fetchUserByUserName(userName, otherfilterParams);
+const fetchUserByUserName = async (userName: string, otherfilterParams: fetchUserByUserNameFilterParams = {}) => {
+  const result: any = await UserRepository.fetchUserByUserName(userName, otherfilterParams);
+  if (result?.users_company && result?.users_company?.length > 0) {
+    const data = result.users_company.map((userCompany: any) => userCompany.company);
+    result.users_company = data.map((company: any) => {
+      return {
+        value: company.id,
+        label: company.name,
+      };
+    });
+  }
+
+  return result;
 };
 
 /**
