@@ -20,15 +20,15 @@ CREATE TABLE `roles` (
 
 -- CreateTable
 CREATE TABLE `user_bank_details` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `users_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
     `account_name` VARCHAR(191) NOT NULL,
     `account_number` VARCHAR(20) NOT NULL,
     `bank_name` VARCHAR(50) NOT NULL,
     `ifsc_code` VARCHAR(20) NOT NULL,
-    `account_type` ENUM('current', 'savings', 'salary') NULL,
+    `account_type` ENUM('current', 'saving', 'salary') NULL,
+    `is_primary` BOOLEAN NOT NULL,
 
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `user_bank_details_user_id_account_number_key`(`user_id`, `account_number`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -97,6 +97,30 @@ CREATE TABLE `users_company` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `user_balance` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `company_id` INTEGER NOT NULL,
+    `amount` INTEGER NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `transaction` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `company_id` INTEGER NOT NULL,
+    `amount` INTEGER NOT NULL DEFAULT 0,
+    `type` ENUM('cr', 'dr') NOT NULL,
+    `date` DATETIME(3) NOT NULL,
+    `mode` VARCHAR(191) NOT NULL,
+    `payment_details` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `todo` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
@@ -117,7 +141,7 @@ CREATE TABLE `Item` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `user_bank_details` ADD CONSTRAINT `user_bank_details_users_id_fkey` FOREIGN KEY (`users_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `user_bank_details` ADD CONSTRAINT `user_bank_details_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `users` ADD CONSTRAINT `users_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -139,6 +163,18 @@ ALTER TABLE `users_company` ADD CONSTRAINT `users_company_user_id_fkey` FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE `users_company` ADD CONSTRAINT `users_company_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_balance` ADD CONSTRAINT `user_balance_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_balance` ADD CONSTRAINT `user_balance_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `transaction` ADD CONSTRAINT `transaction_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `transaction` ADD CONSTRAINT `transaction_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `todo` ADD CONSTRAINT `todo_task_for_user_id_fkey` FOREIGN KEY (`task_for_user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

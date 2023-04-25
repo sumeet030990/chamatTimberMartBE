@@ -225,65 +225,51 @@ async function main() {
   });
 
   // user company mapping
-  // await prisma.users_company.upsert({
-  //   where: { id: 1 },
-  //   update: {},
-  //   create: {
-  //     user_id: 1,
-  //     company_id: 1,
-  //   },
-  // });
-  // await prisma.users_company.upsert({
-  //   where: { id: 2 },
-  //   update: {},
-  //   create: {
-  //     user_id: 1,
-  //     company_id: 2,
-  //   },
-  // });
+  await prisma.users_company.create({
+    data: {
+      user_id: 1,
+      company_id: 1,
+    },
+  });
+  await prisma.users_company.create({
+    data: {
+      user_id: 1,
+      company_id: 2,
+    },
+  });
 
-  // await prisma.users_company.upsert({
-  //   where: { id: 3 },
-  //   update: {},
-  //   create: {
-  //     user_id: 2,
-  //     company_id: 1,
-  //   },
-  // });
+  await prisma.users_company.create({
+    data: {
+      user_id: 2,
+      company_id: 1,
+    },
+  });
 
-  // await prisma.users_company.upsert({
-  //   where: { id: 4 },
-  //   update: {},
-  //   create: {
-  //     user_id: 2,
-  //     company_id: 2,
-  //   },
-  // });
+  await prisma.users_company.create({
+    data: {
+      user_id: 2,
+      company_id: 2,
+    },
+  });
 
-  // await prisma.users_company.upsert({
-  //   where: { id: 5 },
-  //   update: {},
-  //   create: {
-  //     user_id: 3,
-  //     company_id: 1,
-  //   },
-  // });
-  // await prisma.users_company.upsert({
-  //   where: { id: 6 },
-  //   update: {},
-  //   create: {
-  //     user_id: 4,
-  //     company_id: 1,
-  //   },
-  // });
-  // await prisma.users_company.upsert({
-  //   where: { id: 7 },
-  //   update: {},
-  //   create: {
-  //     user_id: 5,
-  //     company_id: 1,
-  //   },
-  // });
+  await prisma.users_company.create({
+    data: {
+      user_id: 3,
+      company_id: 1,
+    },
+  });
+  await prisma.users_company.create({
+    data: {
+      user_id: 4,
+      company_id: 1,
+    },
+  });
+  await prisma.users_company.create({
+    data: {
+      user_id: 5,
+      company_id: 1,
+    },
+  });
 }
 main()
   .then(async () => {

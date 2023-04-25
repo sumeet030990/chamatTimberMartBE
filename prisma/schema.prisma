@@ -24,21 +24,23 @@ model roles {
   users users[]
 }
 
-enum account_name {
+enum account_type {
   current
-  savings
+  saving
   salary
 }
 
 model user_bank_details {
-  id             Int           @id @default(autoincrement())
-  users_id       Int
-  user           users         @relation(fields: [users_id], references: [id])
+  user_id        Int
+  user           users         @relation(fields: [user_id], references: [id])
   account_name   String
   account_number String        @db.VarChar(20)
   bank_name      String        @db.VarChar(50)
   ifsc_code      String        @db.VarChar(20)
-  account_type   account_name?
+  account_type   account_type?
+  is_primary     Boolean
+
+  @@unique([user_id, account_number])
 }
 
 model company {
@@ -60,6 +62,8 @@ model company {
   city_name          String?
   pin_code           String?         @db.VarChar(20)
   users_company      users_company[]
+  user_balance       user_balance[]
+  transaction        transaction[]
 }
 
 enum gst_type {
@@ -113,6 +117,8 @@ model users {
   todo_task_user       todo[]              @relation("todo_task_user")
   todo_created_by_user todo[]              @relation("todo_created_by_user")
   users_company        users_company[]
+  user_balance         user_balance[]
+  transaction          transaction[]
 }
 
 model users_company {
@@ -121,7 +127,34 @@ model users_company {
   company_id Int
   company    company @relation(fields: [company_id], references: [id])
 
-   @@id([user_id, company_id])
+  @@id([user_id, company_id])
+}
+
+model user_balance {
+  id         Int     @id @default(autoincrement())
+  user_id    Int
+  users      users   @relation(fields: [user_id], references: [id])
+  company_id Int
+  company    company @relation(fields: [company_id], references: [id])
+  amount     Int     @default(0)
+}
+
+enum transaction_type {
+  cr
+  dr
+}
+
+model transaction {
+  id              Int              @id @default(autoincrement())
+  user_id         Int
+  users           users            @relation(fields: [user_id], references: [id])
+  company_id      Int
+  company         company          @relation(fields: [company_id], references: [id])
+  amount          Int              @default(0)
+  type            transaction_type
+  date            DateTime
+  mode            String
+  payment_details String
 }
 
 model todo {

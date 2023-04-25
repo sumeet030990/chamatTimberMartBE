@@ -21,6 +21,7 @@ const userObject = {
   city_name: Joi.string().max(50).allow('', null),
   pin_code: Joi.string().max(20).allow('', null),
   companies: Joi.array().min(1),
+  user_bank_details: Joi.array(),
 };
 
 const storeRequest = Joi.object({

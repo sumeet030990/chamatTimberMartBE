@@ -10,6 +10,7 @@
     "prepare": "husky install",
     "lint": "eslint . --ext .ts --ext .js",
     "lint:fix": "eslint --fix . --ext .ts --ext .js",
+    "db:refresh": "npx prisma migrate reset -f && npx prisma migrate dev --name init && node prisma/seed.js",
     "db:reset": "npx prisma migrate reset",
     "db:seed": "node prisma/seed.js",
     "db:migrate": "npx prisma migrate dev --name init"

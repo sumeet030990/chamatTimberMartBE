@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { fetchQueryParamsType } from '../../types/commons';
 import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
+import { formatDataForDropdown } from '../../utils/helpers';
 import UserRepository from '../Repositories/UserRepository';
 
 /**
@@ -11,6 +12,19 @@ import UserRepository from '../Repositories/UserRepository';
  */
 const fetchAllUsers = (reqQuery: fetchQueryParamsType) => {
   return UserRepository.fetchAllUsers(reqQuery);
+};
+
+/**
+ * Fetch all User Data for Autocomplete
+ * @param reqQuery
+ *
+ * @returns Collection
+ */
+const fetchAllUsersForAutocomplete = async (reqQuery: fetchQueryParamsType) => {
+  const result = await UserRepository.fetchAllUsersForAutocomplete(reqQuery);
+  const formattedData = formatDataForDropdown(result);
+
+  return formattedData;
 };
 
 /**
@@ -82,6 +96,7 @@ const deleteUser = (userId: string, loggedInUser: any = {}) => {
 
 export default {
   fetchAllUsers,
+  fetchAllUsersForAutocomplete,
   fetchUserByUserName,
   findById,
   storeUser,

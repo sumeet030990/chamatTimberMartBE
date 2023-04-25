@@ -96,4 +96,20 @@ const removeProtectedFieldsFromData = (data: any, protectedFields: string[]) => 
   return omit({ ...data }, protectedFields); // remove protected fields from user data
 };
 
-export { successResponse, errorResponse, getIndexPageQueryParams, resetPagination, removeProtectedFieldsFromData };
+const formatDataForDropdown = (collectionData: any, idField = 'id', valueField = 'name') => {
+  return collectionData.map((data: any) => {
+    return {
+      value: data[idField],
+      label: data[valueField],
+    };
+  });
+};
+
+export {
+  successResponse,
+  errorResponse,
+  getIndexPageQueryParams,
+  resetPagination,
+  removeProtectedFieldsFromData,
+  formatDataForDropdown,
+};

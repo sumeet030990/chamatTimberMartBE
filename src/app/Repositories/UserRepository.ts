@@ -56,6 +56,35 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
 };
 
 /**
+ * Fetch All User data for autocomplete dropdown
+ * @param queryParams
+ * @returns
+ */
+const fetchAllUsersForAutocomplete = async (queryParams: fetchQueryParamsType) => {
+  try {
+    const { selectedCompany } = queryParams;
+    const result = await prisma.users.findMany({
+      where: {
+        deleted_at: null,
+        users_company: {
+          some: {
+            company_id: parseInt(selectedCompany),
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return result;
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
+};
+
+/**
  * Fetch all Details but omit protected fields like password
  * In update scenario we need to avoid throwing unique user_name error for self profile
  * @param userName
@@ -125,6 +154,7 @@ const findById = async (id: string) => {
             },
           },
         },
+        user_bank_details: true,
       },
     });
 
@@ -200,6 +230,7 @@ const deleteUser = async (userId: string, loggedInUser: any = {}) => {
 };
 export default {
   fetchAllUsers,
+  fetchAllUsersForAutocomplete,
   findById,
   fetchUserByUserName,
   storeUser,

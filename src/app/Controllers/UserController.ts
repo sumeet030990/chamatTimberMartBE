@@ -3,13 +3,19 @@ import createHttpError from 'http-errors';
 import { successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/UserFormValidator';
 import AuthService from '../Services/AuthService';
+import UserBankDetailsService from '../Services/UserBankDetailsService';
 import UserCompanyService from '../Services/UserCompanyService';
 import UserService from '../Services/UserService';
 
 const index = async (req: Request, res: Response, next: any) => {
   try {
     const reqQuery: any = req.query;
-    const data = await UserService.fetchAllUsers(reqQuery);
+    let data: any = [];
+    if (reqQuery.autocomplete) {
+      data = await UserService.fetchAllUsersForAutocomplete(reqQuery);
+    } else {
+      data = await UserService.fetchAllUsers(reqQuery);
+    }
 
     return res.json(successResponse(data));
   } catch (error: any) {
@@ -72,6 +78,13 @@ const store = async (req: Request, res: Response, next: any) => {
   }
 };
 
+const addUserBankDetails = async (userData: any, userBankDetailsData: any) => {
+  if (userBankDetailsData.length > 0 && userData) {
+    const userBankDetailsResult = await UserBankDetailsService.addUserBankDetails(userData, userBankDetailsData);
+
+    return userBankDetailsResult;
+  }
+};
 /**
  * Update the data of the id given
  * @param req
@@ -89,7 +102,9 @@ const update = async (req: Request, res: Response, next: any) => {
 
     // company Data
     const companyData = validateData.companies;
+    const userBankDetailsData = validateData.user_bank_details;
     delete validateData.companies;
+    delete validateData.user_bank_details;
 
     const updateUser = await UserService.updateUser(params.id, validateData);
     let companyUserMapping: any = [];
@@ -97,7 +112,9 @@ const update = async (req: Request, res: Response, next: any) => {
       companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, updateUser);
     }
 
-    return res.json(successResponse(updateUser, companyUserMapping));
+    const bankDetailsResult = await addUserBankDetails(updateUser, userBankDetailsData);
+
+    return res.json(successResponse({ updateUser, companyUserMapping, bankDetailsResult }));
   } catch (error: any) {
     next(error);
   }
