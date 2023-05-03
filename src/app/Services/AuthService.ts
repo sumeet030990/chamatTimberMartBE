@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { isEmpty } from 'lodash';
 import path from 'path';
 import { ACCESS_TOKEN_EXPIRES_IN } from '../../utils/constant';
+import UserRepository from '../Repositories/UserRepository';
 
 const fileDir = path.join(__dirname, '../../');
 
@@ -69,9 +70,23 @@ const verifyAccessToken = (token: string) => {
     throw new createHttpError.Unauthorized();
   }
 };
+
+const changePassword = async (userId: string, password: string) => {
+  try {
+    const hashed = await hashedPassword(password);
+
+    if (hashed) {
+      return UserRepository.changePassword(userId, hashed);
+    }
+  } catch (error: any) {
+    throw new createHttpError.UnprocessableEntity(error.message);
+  }
+};
+
 export default {
   hashedPassword,
   verifyPassword,
   createAccessToken,
   verifyAccessToken,
+  changePassword,
 };

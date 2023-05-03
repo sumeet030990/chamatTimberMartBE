@@ -1,9 +1,69 @@
+/* eslint-disable no-param-reassign */
 import { Prisma } from '@prisma/client';
+import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
 import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
 import { formatDataForDropdown } from '../../utils/helpers';
 import UserRepository from '../Repositories/UserRepository';
 
+const getSortingCondition = (reqQuery: fetchQueryParamsType) => {
+  const { sort_field, sort_order } = reqQuery;
+
+  if (sort_field === 'role') {
+    reqQuery.sortCondition = {
+      user_role: {
+        name: sort_order,
+      },
+    };
+  } else if (sort_field === 'balance') {
+    reqQuery.sortCondition = {
+      user_balance: {
+        amount: sort_order,
+      },
+    };
+  } else if (sort_field === 'allowLogin') {
+    reqQuery.sortCondition = {
+      allow_login: sort_order,
+    };
+  } else {
+    reqQuery.sortCondition = {
+      [sort_field]: sort_order,
+    };
+  }
+
+  return reqQuery;
+};
+
+const getSearchCondtion = (reqQuery: fetchQueryParamsType) => {
+  const { search } = reqQuery;
+
+  if (isUndefined(search)) {
+    reqQuery.search = {};
+
+    return reqQuery;
+  }
+
+  reqQuery.search = {
+    OR: [
+      {
+        name: {
+          contains: search,
+        },
+      },
+      {
+        user_role: {
+          is: {
+            name: {
+              contains: search,
+            },
+          },
+        },
+      },
+    ],
+  };
+
+  return reqQuery;
+};
 /**
  * Fetch all User Data
  * @param reqQuery
@@ -11,6 +71,11 @@ import UserRepository from '../Repositories/UserRepository';
  * @returns Collection
  */
 const fetchAllUsers = (reqQuery: fetchQueryParamsType) => {
+  reqQuery = getSortingCondition(reqQuery);
+
+  // search
+  reqQuery = getSearchCondtion(reqQuery);
+
   return UserRepository.fetchAllUsers(reqQuery);
 };
 

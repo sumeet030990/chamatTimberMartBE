@@ -55,20 +55,11 @@ async function main() {
   });
 
   await prisma.roles.upsert({
-    where: { slug: 'customer_user' },
+    where: { slug: 'customer' },
     update: {},
     create: {
-      name: 'Customer User',
-      slug: 'customer_user',
-    },
-  });
-
-  await prisma.roles.upsert({
-    where: { slug: 'customer_company' },
-    update: {},
-    create: {
-      name: 'Customer Company',
-      slug: 'customer_company',
+      name: 'Customer',
+      slug: 'customer',
     },
   });
 
@@ -162,14 +153,14 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'customer_company' },
+    where: { user_name: 'customer' },
     update: {},
     create: {
-      name: 'Customer Company',
+      name: 'Customer',
       allow_login: true,
-      user_name: 'customer_company',
+      user_name: 'customer',
       password: '$2b$10$AxMw./hiWRdCg/OuFG9xUeWGV2GMWFVCKchr1Kslbk.l4dwpCnglm',
-      role_id: 3,
+      role_id: 2,
       language_id: 1,
       primary_contact: '0123456789',
       country_id: 'IN',
@@ -190,7 +181,7 @@ async function main() {
       allow_login: true,
       user_name: 'employee_operator',
       password: '$2b$10$AxMw./hiWRdCg/OuFG9xUeWGV2GMWFVCKchr1Kslbk.l4dwpCnglm',
-      role_id: 4,
+      role_id: 3,
       language_id: 1,
       primary_contact: '0123456789',
       country_id: 'IN',
@@ -211,7 +202,7 @@ async function main() {
       allow_login: true,
       user_name: 'employee_normal',
       password: '$2b$10$AxMw./hiWRdCg/OuFG9xUeWGV2GMWFVCKchr1Kslbk.l4dwpCnglm',
-      role_id: 5,
+      role_id: 4,
       language_id: 1,
       primary_contact: '0123456789',
       country_id: 'IN',
@@ -261,7 +252,7 @@ async function main() {
   await prisma.users_company.create({
     data: {
       user_id: 4,
-      company_id: 1,
+      company_id: 2,
     },
   });
   await prisma.users_company.create({

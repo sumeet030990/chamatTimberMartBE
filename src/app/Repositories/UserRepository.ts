@@ -14,7 +14,10 @@ const prisma = new PrismaClient();
  */
 const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
   try {
-    const { pageNumber, pageSize, sort_field, sort_order, selectedCompany } = queryParams;
+    const { pageNumber, pageSize, sortCondition, selectedCompany, search } = queryParams;
+
+    const searchCondition: any = search;
+
     const result = await prisma.users.findMany({
       where: {
         deleted_at: null,
@@ -23,6 +26,8 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
             company_id: parseInt(selectedCompany),
           },
         },
+        // search
+        ...searchCondition,
       },
       select: {
         id: true,
@@ -33,12 +38,15 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
             name: true,
           },
         },
+        user_balance: {
+          select: {
+            amount: true,
+          },
+        },
       },
       skip: Number((pageNumber - 1) * pageSize),
       take: Number(pageSize),
-      orderBy: {
-        [sort_field]: sort_order,
-      },
+      orderBy: sortCondition,
     });
 
     const count = await prisma.users.count({});
@@ -228,6 +236,26 @@ const deleteUser = async (userId: string, loggedInUser: any = {}) => {
     throw new createHttpError.InternalServerError(error.message);
   }
 };
+
+/**
+ * Change User Password
+ * @param userId
+ * @param data
+ * @returns
+ */
+const changePassword = async (userId: string, data: string) => {
+  const result = await prisma.users.update({
+    where: {
+      id: Number(userId),
+    },
+    data: {
+      password: data,
+    },
+  });
+
+  return result;
+};
+
 export default {
   fetchAllUsers,
   fetchAllUsersForAutocomplete,
@@ -236,4 +264,5 @@ export default {
   storeUser,
   updateUser,
   deleteUser,
+  changePassword,
 };

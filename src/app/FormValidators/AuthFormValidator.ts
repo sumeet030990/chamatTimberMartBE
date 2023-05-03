@@ -6,4 +6,8 @@ const loginRequest = Joi.object({
   password: Joi.string().min(2).max(20).required(),
 }).options({ abortEarly: false });
 
-export { loginRequest };
+const changePasswordRequest = Joi.object({
+  password: Joi.string().min(3).max(50).required(),
+}).options({ abortEarly: false });
+
+export { loginRequest, changePasswordRequest };

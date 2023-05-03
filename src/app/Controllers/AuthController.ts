@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isNull } from 'lodash';
 import { removeProtectedFieldsFromData, successResponse } from '../../utils/helpers';
-import { loginRequest } from '../FormValidators/AuthFormValidator';
+import { changePasswordRequest, loginRequest } from '../FormValidators/AuthFormValidator';
 import AuthService from '../Services/AuthService';
 import UserService from '../Services/UserService';
 
@@ -54,6 +54,25 @@ const login = async (req: Request, res: Response, next: any): Promise<Response> 
   }
 };
 
+/**
+ * Change Password
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+const changePassword = async (req: Request, res: Response, next: any): Promise<Response> => {
+  try {
+    const validationResult = await changePasswordRequest.validateAsync(req.body);
+    const { password } = validationResult;
+    const result = await AuthService.changePassword(req.params.id, password);
+
+    return res.json(successResponse(result));
+  } catch (error: any) {
+    return next(error);
+  }
+};
 export default {
   login,
+  changePassword,
 };

@@ -114,8 +114,13 @@ CREATE TABLE `transaction` (
     `amount` INTEGER NOT NULL DEFAULT 0,
     `type` ENUM('cr', 'dr') NOT NULL,
     `date` DATETIME(3) NOT NULL,
-    `mode` VARCHAR(191) NOT NULL,
-    `payment_details` VARCHAR(191) NOT NULL,
+    `payment_mode` VARCHAR(191) NOT NULL,
+    `payment_details` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `created_by` INTEGER NOT NULL,
+    `deleted_at` DATETIME(3) NULL,
+    `deleted_by` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -175,6 +180,12 @@ ALTER TABLE `transaction` ADD CONSTRAINT `transaction_user_id_fkey` FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE `transaction` ADD CONSTRAINT `transaction_company_id_fkey` FOREIGN KEY (`company_id`) REFERENCES `company`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `transaction` ADD CONSTRAINT `transaction_created_by_fkey` FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `transaction` ADD CONSTRAINT `transaction_deleted_by_fkey` FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `todo` ADD CONSTRAINT `todo_task_for_user_id_fkey` FOREIGN KEY (`task_for_user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

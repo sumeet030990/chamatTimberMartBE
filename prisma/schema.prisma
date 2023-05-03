@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -113,12 +114,14 @@ model users {
   deleted_by                 Int?
   deleted_user_self_relation users[]   @relation("deleted_user_self_relation")
 
-  user_bank_details    user_bank_details[]
-  todo_task_user       todo[]              @relation("todo_task_user")
-  todo_created_by_user todo[]              @relation("todo_created_by_user")
-  users_company        users_company[]
-  user_balance         user_balance[]
-  transaction          transaction[]
+  user_bank_details      user_bank_details[]
+  todo_task_user         todo[]              @relation("todo_task_user")
+  todo_created_by_user   todo[]              @relation("todo_created_by_user")
+  users_company          users_company[]
+  user_balance           user_balance[]
+  transaction_for_user   transaction[]       @relation("transaction_for_user")
+  transaction_created_by transaction[]       @relation("transaction_created_by")
+  transaction_deleted_by transaction[]       @relation("transaction_deleted_by")
 }
 
 model users_company {
@@ -147,14 +150,21 @@ enum transaction_type {
 model transaction {
   id              Int              @id @default(autoincrement())
   user_id         Int
-  users           users            @relation(fields: [user_id], references: [id])
+  users           users            @relation("transaction_for_user", fields: [user_id], references: [id])
   company_id      Int
   company         company          @relation(fields: [company_id], references: [id])
   amount          Int              @default(0)
   type            transaction_type
   date            DateTime
-  mode            String
-  payment_details String
+  payment_mode    String
+  payment_details String?
+  note            String?
+  created_at      DateTime         @default(now())
+  created_by      Int
+  createdByUser   users            @relation("transaction_created_by", fields: [created_by], references: [id])
+  deleted_at      DateTime?
+  deleted_by      Int?
+  deletedByUser   users?           @relation("transaction_deleted_by", fields: [deleted_by], references: [id])
 }
 
 model todo {
