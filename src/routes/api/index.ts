@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authRoutes from './auth';
 import companyRoute from './company';
+import itemsRoutes from './items';
 import languagesRoute from './languages';
 import locationsRoute from './location';
 import rolesRoutes from './roles';
@@ -16,5 +17,6 @@ router.use('/languages', languagesRoute);
 router.use('/locations', locationsRoute);
 router.use('/companies', companyRoute);
 router.use('/transactions', transactionRoutes);
+router.use('/items', itemsRoutes);
 
 export default router;

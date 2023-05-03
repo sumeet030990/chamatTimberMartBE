@@ -85,6 +85,7 @@ const addUserBankDetails = async (userData: any, userBankDetailsData: any) => {
     return userBankDetailsResult;
   }
 };
+
 /**
  * Update the data of the id given
  * @param req
