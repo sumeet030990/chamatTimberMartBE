@@ -59,7 +59,6 @@ model company {
   country_name       String?
   state_id           String?         @db.VarChar(5)
   state_name         String?
-  // city_id            Int?
   city_name          String?
   pin_code           String?         @db.VarChar(20)
   users_company      users_company[]
@@ -95,7 +94,6 @@ model users {
   country_name               String?
   state_id                   String?   @db.VarChar(5)
   state_name                 String?   @db.VarChar(50)
-  city_id                    Int?
   city_name                  String?   @db.VarChar(50)
   pin_code                   String?   @db.VarChar(20)
   //created_timestamp
@@ -182,6 +180,7 @@ model Item {
   id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(20)
   item_code  String    @db.VarChar(20)
+  item_type  String    @db.VarChar(20)
   status     Boolean   @default(true)
   deleted_at DateTime?
 }

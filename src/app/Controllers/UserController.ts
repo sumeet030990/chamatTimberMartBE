@@ -39,6 +39,14 @@ const show = async (req: Request, res: Response, next: any) => {
   }
 };
 
+const addUserBankDetails = async (userData: any, userBankDetailsData: any) => {
+  if (userBankDetailsData.length > 0 && userData) {
+    const userBankDetailsResult = await UserBankDetailsService.addUserBankDetails(userData, userBankDetailsData);
+
+    return userBankDetailsResult;
+  }
+};
+
 /**
  * Post api for Storing User in DB
  * @param req Request
@@ -64,7 +72,9 @@ const store = async (req: Request, res: Response, next: any) => {
 
     // company Data
     const companyData = validationResult.companies;
+    const userBankDetailsData = validationResult.user_bank_details;
     delete validationResult.companies;
+    delete validationResult.user_bank_details;
     // save user data
     const savedUser = await UserService.storeUser(validationResult);
     let companyUserMapping: any = [];
@@ -72,17 +82,11 @@ const store = async (req: Request, res: Response, next: any) => {
       companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, savedUser);
     }
 
-    return res.json(successResponse({ savedUser, companyUserMapping }));
+    const bankDetailsResult = await addUserBankDetails(savedUser, userBankDetailsData);
+
+    return res.json(successResponse({ savedUser, companyUserMapping, bankDetailsResult }));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
-  }
-};
-
-const addUserBankDetails = async (userData: any, userBankDetailsData: any) => {
-  if (userBankDetailsData.length > 0 && userData) {
-    const userBankDetailsResult = await UserBankDetailsService.addUserBankDetails(userData, userBankDetailsData);
-
-    return userBankDetailsResult;
   }
 };
 

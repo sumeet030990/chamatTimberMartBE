@@ -2,7 +2,7 @@
 import { Prisma } from '@prisma/client';
 import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
-import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
+import { fetchUserByUserNameFilterParams, fetchUserQueryParamsType } from '../../types/userTypes';
 import { formatDataForDropdown } from '../../utils/helpers';
 import UserRepository from '../Repositories/UserRepository';
 
@@ -85,7 +85,7 @@ const fetchAllUsers = (reqQuery: fetchQueryParamsType) => {
  *
  * @returns Collection
  */
-const fetchAllUsersForAutocomplete = async (reqQuery: fetchQueryParamsType) => {
+const fetchAllUsersForAutocomplete = async (reqQuery: fetchUserQueryParamsType) => {
   const result = await UserRepository.fetchAllUsersForAutocomplete(reqQuery);
   const formattedData = formatDataForDropdown(result);
 

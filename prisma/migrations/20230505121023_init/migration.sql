@@ -74,7 +74,6 @@ CREATE TABLE `users` (
     `country_name` VARCHAR(191) NULL,
     `state_id` VARCHAR(5) NULL,
     `state_name` VARCHAR(50) NULL,
-    `city_id` INTEGER NULL,
     `city_name` VARCHAR(50) NULL,
     `pin_code` VARCHAR(20) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -141,6 +140,7 @@ CREATE TABLE `Item` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
     `item_code` VARCHAR(20) NOT NULL,
+    `item_type` VARCHAR(20) NOT NULL,
     `status` BOOLEAN NOT NULL DEFAULT true,
     `deleted_at` DATETIME(3) NULL,
 

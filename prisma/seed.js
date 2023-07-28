@@ -153,12 +153,12 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'customer' },
+    where: { user_name: 'customer1' },
     update: {},
     create: {
-      name: 'Customer',
+      name: 'Customer 1',
       allow_login: true,
-      user_name: 'customer',
+      user_name: 'customer1',
       password: '$2b$10$AxMw./hiWRdCg/OuFG9xUeWGV2GMWFVCKchr1Kslbk.l4dwpCnglm',
       role_id: 2,
       language_id: 1,
@@ -168,6 +168,27 @@ async function main() {
       state_id: 'MH',
       state_name: 'Maharashtra',
       city_name: 'Nagpur',
+      pin_code: '440008',
+      created_by: 1,
+    },
+  });
+
+  await prisma.users.upsert({
+    where: { user_name: 'customer2' },
+    update: {},
+    create: {
+      name: 'Customer 2',
+      allow_login: true,
+      user_name: 'customer2',
+      password: '$2b$10$AxMw./hiWRdCg/OuFG9xUeWGV2GMWFVCKchr1Kslbk.l4dwpCnglm',
+      role_id: 2,
+      language_id: 1,
+      primary_contact: '999999999',
+      country_id: 'IN',
+      country_name: 'India',
+      state_id: 'MH',
+      state_name: 'Maharashtra',
+      city_name: 'Pune',
       pin_code: '440008',
       created_by: 1,
     },
@@ -259,6 +280,25 @@ async function main() {
     data: {
       user_id: 5,
       company_id: 1,
+    },
+  });
+
+  // item
+  await prisma.item.create({
+    data: {
+      name: '1.50 0.50 ',
+      item_code: 'hsin',
+      item_type: 'teak_sawn',
+      status: true,
+    },
+  });
+
+  await prisma.item.create({
+    data: {
+      name: '1.00 0.50 ',
+      item_code: 'hsin',
+      item_type: 'teak_sawn',
+      status: true,
     },
   });
 }

@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
 import { fetchQueryParamsType } from '../../types/commons';
+import { fetchItemQueryParamsType } from '../../types/itemTypes';
 import { getCurrentDate } from '../../utils/dateTimeConversions';
 
 const prisma = new PrismaClient();
@@ -31,6 +32,37 @@ const fetchAllItems = async (reqQuery: fetchQueryParamsType) => {
     return {
       data: result,
     };
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
+};
+
+/**
+ *
+ * @param queryParams
+ * @returns
+ */
+const fetchAllItemsAutocomplete = async (queryParams: fetchItemQueryParamsType) => {
+  try {
+    const { itemType } = queryParams;
+    const itemTypeCondition = itemType === 'all' ? {} : { item_type: itemType };
+
+    // add item condition
+
+    const result = await prisma.item.findMany({
+      where: {
+        deleted_at: null,
+        status: true,
+        ...itemTypeCondition,
+      },
+      select: {
+        id: true,
+        name: true,
+        item_type: true,
+      },
+    });
+
+    return result;
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }
@@ -111,6 +143,7 @@ const destroyItem = async (itemId: string) => {
 
 export default {
   fetchAllItems,
+  fetchAllItemsAutocomplete,
   findById,
   storeItem,
   updateItem,

@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
 import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
-import { fetchUserByUserNameFilterParams } from '../../types/userTypes';
+import { fetchUserByUserNameFilterParams, fetchUserQueryParamsType } from '../../types/userTypes';
 import { removeProtectedFieldsFromData } from '../../utils/helpers';
 
 const prisma = new PrismaClient();
@@ -68,12 +68,16 @@ const fetchAllUsers = async (queryParams: fetchQueryParamsType) => {
  * @param queryParams
  * @returns
  */
-const fetchAllUsersForAutocomplete = async (queryParams: fetchQueryParamsType) => {
+const fetchAllUsersForAutocomplete = async (queryParams: fetchUserQueryParamsType) => {
   try {
-    const { selectedCompany } = queryParams;
+    const { selectedCompany, userType } = queryParams;
+
+    // add role condition
+
     const result = await prisma.users.findMany({
       where: {
         deleted_at: null,
+        role_id: userType === 'all' ? {} : parseInt(userType),
         users_company: {
           some: {
             company_id: parseInt(selectedCompany),

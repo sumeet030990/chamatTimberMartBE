@@ -13,9 +13,16 @@ import ItemService from '../Services/ItemService';
 const index = async (req: Request, res: Response, next: any) => {
   try {
     const reqQuery: any = req.query;
-    const rolesData = await ItemService.fetchAllItems(reqQuery);
+    let itemData: any = [];
 
-    return res.json(successResponse(rolesData.data));
+    if (reqQuery.autocomplete) {
+      itemData = await ItemService.fetchAllItemsAutocomplete(reqQuery);
+
+      return res.json(successResponse(itemData));
+    }
+    itemData = await ItemService.fetchAllItems(reqQuery);
+
+    return res.json(successResponse(itemData.data));
   } catch (error: any) {
     return next(error);
   }
