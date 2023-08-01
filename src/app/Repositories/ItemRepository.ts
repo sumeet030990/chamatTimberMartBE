@@ -59,6 +59,9 @@ const fetchAllItemsAutocomplete = async (queryParams: fetchItemQueryParamsType) 
         id: true,
         name: true,
         item_type: true,
+        length: true,
+        width: true,
+        height: true,
       },
     });
 

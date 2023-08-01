@@ -141,6 +141,9 @@ CREATE TABLE `Item` (
     `name` VARCHAR(20) NOT NULL,
     `item_code` VARCHAR(20) NOT NULL,
     `item_type` VARCHAR(20) NOT NULL,
+    `length` DOUBLE NULL,
+    `width` DOUBLE NULL,
+    `height` DOUBLE NULL,
     `status` BOOLEAN NOT NULL DEFAULT true,
     `deleted_at` DATETIME(3) NULL,
 

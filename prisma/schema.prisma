@@ -181,6 +181,9 @@ model Item {
   name       String    @db.VarChar(20)
   item_code  String    @db.VarChar(20)
   item_type  String    @db.VarChar(20)
+  length     Float?
+  width      Float?
+  height     Float?
   status     Boolean   @default(true)
   deleted_at DateTime?
 }

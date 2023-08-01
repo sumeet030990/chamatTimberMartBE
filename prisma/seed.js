@@ -286,18 +286,51 @@ async function main() {
   // item
   await prisma.item.create({
     data: {
-      name: '1.50 0.50 ',
+      name: '1.50*0.50',
       item_code: 'hsin',
       item_type: 'teak_sawn',
+      length: 1.5,
+      width: 0.5,
       status: true,
     },
   });
 
   await prisma.item.create({
     data: {
-      name: '1.00 0.50 ',
+      name: '1.00*0.50',
       item_code: 'hsin',
       item_type: 'teak_sawn',
+      length: 1,
+      width: 0.5,
+      status: true,
+    },
+  });
+
+  await prisma.item.create({
+    data: {
+      name: '1.00*10',
+      item_code: 'hsin',
+      item_type: 'bidding',
+      length: 1,
+      height: 10,
+      status: true,
+    },
+  });
+
+  await prisma.item.create({
+    data: {
+      name: 'Mandir',
+      item_code: 'hsin',
+      item_type: 'mandir',
+      status: true,
+    },
+  });
+
+  await prisma.item.create({
+    data: {
+      name: 'Bed',
+      item_code: 'hsin',
+      item_type: 'furniture',
       status: true,
     },
   });

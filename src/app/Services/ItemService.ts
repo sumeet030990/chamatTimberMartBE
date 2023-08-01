@@ -62,6 +62,9 @@ const fetchAllItemsAutocomplete = async (reqQuery: fetchItemQueryParamsType) => 
       value: data.id,
       label: data.name,
       type: data.item_type,
+      length: data.length,
+      width: data.width,
+      height: data.height,
     };
   });
 
