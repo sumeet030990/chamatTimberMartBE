@@ -18,56 +18,47 @@
         "sort-requires"
     ],
     "rules": {
-        "no-unused-vars": "error",
-        "no-await-in-loop":"off",
-        "prettier/prettier": "warn",
-        // "sort-imports": "error",
-        "func-names": "off",
-        "newline-before-return": "error",
-        "sort-vars": "warn",
-        "no-plusplus": "off",
-        "import/prefer-default-export": "off",
-        "camelcase": "off",
-        "no-underscore-dangle": "off",
-        "arrow-body-style": "off",
-        "consistent-return": "off",
-        "radix":"off",
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "ts": "never",
-                "tsx": "never"
-            }
-        ],
-        "import/no-import-module-exports": [
-            "error",
-            {
-                "exceptions": [
-                    "**/*/*.ts"
-                ]
-            }
-        ],
-        "import/order": [
-            "error",
-            {
-                "groups": [
-                    [
-                        "builtin",
-                        "external"
-                    ],
-                    [
-                        "internal",
-                        "parent",
-                        "sibling",
-                        "index"
-                    ]
-                ],
-              "alphabetize": {
-                "order": "asc"
-              }
-            }
-          ]
+      "no-unused-vars": "error",
+      "no-await-in-loop": "off",
+      "import/no-cycle": "off",
+      "prettier/prettier": "warn",
+      // "sort-imports": "error",
+      "func-names": "off",
+      "newline-before-return": "error",
+      "sort-vars": "warn",
+      "no-plusplus": "off",
+      "import/prefer-default-export": "off",
+      "camelcase": "off",
+      "no-underscore-dangle": "off",
+      "arrow-body-style": "off",
+      "consistent-return": "off",
+      "radix": "off",
+      "import/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          "ts": "never",
+          "tsx": "never"
+        }
+      ],
+      "import/no-import-module-exports": [
+        "error",
+        {
+          "exceptions": ["**/*/*.ts"]
+        }
+      ],
+      "import/order": [
+        "error",
+        {
+          "groups": [
+            ["builtin", "external"],
+            ["internal", "parent", "sibling", "index"]
+          ],
+          "alphabetize": {
+            "order": "asc"
+          }
+        }
+      ]
     },
     "settings": {
         "import/parsers": {

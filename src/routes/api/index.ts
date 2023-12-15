@@ -6,6 +6,7 @@ import companyRoute from './company';
 import itemsRoutes from './items';
 import languagesRoute from './languages';
 import locationsRoute from './location';
+import ordersRoutes from './orders';
 import rolesRoutes from './roles';
 import transactionRoutes from './transactions';
 import userRoutes from './users';
@@ -20,6 +21,7 @@ router.use('/locations', locationsRoute);
 router.use('/companies', companyRoute);
 router.use('/transactions', transactionRoutes);
 router.use('/items', itemsRoutes);
+router.use('/orders', ordersRoutes);
 
 // get server info
 router.use('/server-info', (req: Request, res: Response) => {

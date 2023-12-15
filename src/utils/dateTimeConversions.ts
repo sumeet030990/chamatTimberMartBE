@@ -1,7 +1,8 @@
 import moment from 'moment';
+import { DATE_FORMAT } from './constant';
 
 export const getCurrentDate = () => {
-  return moment().utc().toDate();
+  return moment(new Date(), DATE_FORMAT).utc().toDate();
 };
 
 /**
@@ -10,7 +11,7 @@ export const getCurrentDate = () => {
  * @returns string
  */
 export const convertToDdMmYyString = (date: any) => {
-  return moment(date).utc().format('DD/MM/YY');
+  return moment(date).utc().format(DATE_FORMAT);
 };
 
 /**
@@ -18,8 +19,8 @@ export const convertToDdMmYyString = (date: any) => {
  * @param {*} date
  * @returns Data
  */
-export const convertToDdMmYyToDate = (date: string) => {
-  const dateMomentObject = moment(date, 'DD/MM/YYYY').utc(); // 1st argument - string, 2nd argument - format
+export const convertDateStringToDate = (date: string) => {
+  const dateMomentObject = moment(date, DATE_FORMAT).utc(); // 1st argument - string, 2nd argument - format
 
   return dateMomentObject.toDate(); // convert moment.js object to Date object
 };

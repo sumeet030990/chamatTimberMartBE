@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { Prisma } from '@prisma/client';
 import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
 import { fetchUserByUserNameFilterParams, fetchUserQueryParamsType } from '../../types/userTypes';
@@ -137,7 +136,8 @@ const findById = async (id: string) => {
  * @param data
  * @returns
  */
-const storeUser = async (data: Prisma.usersCreateInput) => {
+// const storeUser = async (data: Prisma.usersCreateInput) => {
+const storeUser = async (data: any) => {
   return UserRepository.storeUser(data);
 };
 
@@ -159,12 +159,31 @@ const deleteUser = (userId: string, loggedInUser: any = {}) => {
   return UserRepository.deleteUser(userId, loggedInUser);
 };
 
+/**
+ * From OrderController when user is new we need to save this user to db
+ * so formatting the incoming data as per requirement
+ * @param userData
+ * @returns
+ */
+const formatUserDataFromOrder = (userData: any) => {
+  return {
+    allow_login: false,
+    name: userData?.user[0].label,
+    primary_contact: userData.contact_detail || '',
+    city_name: userData.city || '',
+    role_id: 2,
+    language_id: 1,
+    created_by: parseInt(userData.created_by),
+  };
+};
+
 export default {
   fetchAllUsers,
   fetchAllUsersForAutocomplete,
   fetchUserByUserName,
   findById,
   storeUser,
+  formatUserDataFromOrder,
   updateUser,
   deleteUser,
 };

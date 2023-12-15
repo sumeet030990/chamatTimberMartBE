@@ -1,5 +1,6 @@
 import { isEmpty, omit } from 'lodash';
 import { PAGE_SIZE } from './constant';
+import AuthService from '../app/Services/AuthService';
 
 /**
  * @desc    Send any success response
@@ -105,6 +106,12 @@ const formatDataForDropdown = (collectionData: any, idField = 'id', valueField =
   });
 };
 
+const getAuthUserFromHeaders = (headers: any) => {
+  const authUser: any = AuthService.verifyAccessToken(headers.authorization);
+
+  return authUser.userData;
+};
+
 export {
   successResponse,
   errorResponse,
@@ -112,4 +119,5 @@ export {
   resetPagination,
   removeProtectedFieldsFromData,
   formatDataForDropdown,
+  getAuthUserFromHeaders,
 };

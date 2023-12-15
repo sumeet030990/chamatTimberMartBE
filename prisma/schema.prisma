@@ -74,7 +74,7 @@ enum gst_type {
 
 model users {
   id                         Int       @id @default(autoincrement())
-  name                       String    @db.VarChar(50)
+  name                       String    @unique @db.VarChar(50)
   allow_login                Boolean   @default(true)
   user_name                  String?   @unique @db.VarChar(50)
   password                   String?
@@ -120,6 +120,10 @@ model users {
   transaction_for_user   transaction[]       @relation("transaction_for_user")
   transaction_created_by transaction[]       @relation("transaction_created_by")
   transaction_deleted_by transaction[]       @relation("transaction_deleted_by")
+  order_for_user   orders[]       @relation("order_for_user")
+  order_created_by orders[]       @relation("order_created_by")
+  order_deleted_by orders[]       @relation("order_deleted_by")
+
 }
 
 model users_company {
@@ -186,4 +190,45 @@ model Item {
   height     Float?
   status     Boolean   @default(true)
   deleted_at DateTime?
+  order_details order_details[]
+}
+
+enum bill_type {
+  whole_sale_bill
+  retail
+}
+
+model orders {
+  id         Int       @id @default(autoincrement())
+  user_id         Int
+  users           users            @relation("order_for_user", fields: [user_id], references: [id])
+  user_object     Json
+  city  String
+  contact_number  String
+  item_type String
+  invoice_date  DateTime
+  total Int
+  total_typewise Json
+  bill_type bill_type 
+  created_at      DateTime @default(now())
+  created_by_user Int
+  createdByUser   users    @relation("order_created_by", fields: [created_by_user], references: [id])
+  deleted_at      DateTime?
+  deleted_by_user Int?
+  deletedByUser   users?    @relation("order_deleted_by", fields: [deleted_by_user], references: [id])
+  order_details  order_details[]
+}
+
+model order_details{
+  id Int @id @default(autoincrement())
+  order_id Int
+  orders orders @relation(fields: [order_id], references: [id])
+  item_id Int?
+  items Item? @relation(fields: [item_id],references: [id])
+  item_object Json
+  size Int?
+  piece Int
+  rate Int
+  remark String?
+  sub_items Json?
 }
