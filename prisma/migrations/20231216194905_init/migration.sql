@@ -140,7 +140,7 @@ CREATE TABLE `todo` (
 CREATE TABLE `Item` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
-    `item_code` VARCHAR(20) NOT NULL,
+    `item_code` VARCHAR(20) NOT NULL DEFAULT 'hsin',
     `item_type` VARCHAR(20) NOT NULL,
     `length` DOUBLE NULL,
     `width` DOUBLE NULL,
@@ -165,8 +165,8 @@ CREATE TABLE `orders` (
     `bill_type` ENUM('whole_sale_bill', 'retail') NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_by_user` INTEGER NOT NULL,
-    `deleted_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `deleted_by_user` INTEGER NOT NULL,
+    `deleted_at` DATETIME(3) NULL,
+    `deleted_by_user` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -176,7 +176,7 @@ CREATE TABLE `order_details` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `order_id` INTEGER NOT NULL,
     `item_id` INTEGER NULL,
-    `item_object` JSON NOT NULL,
+    `item_object` JSON NULL,
     `size` INTEGER NULL,
     `piece` INTEGER NOT NULL,
     `rate` INTEGER NOT NULL,
@@ -241,7 +241,7 @@ ALTER TABLE `orders` ADD CONSTRAINT `orders_user_id_fkey` FOREIGN KEY (`user_id`
 ALTER TABLE `orders` ADD CONSTRAINT `orders_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `orders` ADD CONSTRAINT `orders_deleted_by_user_fkey` FOREIGN KEY (`deleted_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `orders` ADD CONSTRAINT `orders_deleted_by_user_fkey` FOREIGN KEY (`deleted_by_user`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `order_details` ADD CONSTRAINT `order_details_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

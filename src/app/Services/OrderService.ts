@@ -1,8 +1,11 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import OrderDetailService from './OrderDetailService';
 import { fetchQueryParamsType } from '../../types/commons';
 import { convertDateStringToDate, getCurrentDate } from '../../utils/dateTimeConversions';
+import OrderDetailRepository from '../Repositories/OrderDetailRepository';
 import OrderRepository from '../Repositories/OrderRepository';
+
+const prisma = new PrismaClient();
 
 /**
  * Fetch all Order Data
@@ -38,11 +41,11 @@ const formatOrderData = (savedUser: any, orderData: any) => {
     contact_number: customer_details.contact_detail,
     item_type: customer_details.item_type,
     invoice_date: convertDateStringToDate(customer_details.invoice_date),
-    total: orderData.total.total,
+    total: parseFloat(orderData.total.total),
     total_typewise: orderData.total,
     bill_type: orderData.type,
     created_at: getCurrentDate(),
-    created_by_user: orderData.created_by,
+    created_by_user: savedUser.value,
   };
 };
 
@@ -53,8 +56,24 @@ const formatOrderData = (savedUser: any, orderData: any) => {
  */
 const storeOrder = async (savedUser: any, orderData: Prisma.ordersCreateInput) => {
   const formattedOrderData = formatOrderData(savedUser, orderData);
-  const formattedOrderDetailsData = OrderDetailService.formatOrderDetailData(orderData);
-  const result = await OrderRepository.storeOrder(formattedOrderData, formattedOrderDetailsData);
+
+  const result = await prisma.$transaction(async tx => {
+    // 1. Store ORDER data.
+    const orderResult = await OrderRepository.storeOrder(tx, formattedOrderData);
+
+    // 2. Verify that the sender's balance didn't go below zero.
+    const formattedOrderDetailsData = OrderDetailService.formatOrderDetailData(orderResult, orderData);
+    const orderDetailsResult = [];
+    for (let index = 0; index < formattedOrderDetailsData.length; index++) {
+      const element = formattedOrderDetailsData[index];
+      const orderDetailsElementResult = await OrderDetailRepository.storeOrderDetails(tx, element);
+      orderDetailsResult.push(orderDetailsElementResult);
+    }
+
+    return { orderResult, orderDetailsResult };
+  });
+
+  // const result = await OrderRepository.storeOrder(formattedOrderData, formattedOrderDetailsData);
 
   return result;
 };

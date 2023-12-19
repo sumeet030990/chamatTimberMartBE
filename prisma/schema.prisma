@@ -183,7 +183,7 @@ model todo {
 model Item {
   id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(20)
-  item_code  String    @db.VarChar(20)
+  item_code  String    @db.VarChar(20) @default("hsin")
   item_type  String    @db.VarChar(20)
   length     Float?
   width      Float?
@@ -225,7 +225,7 @@ model order_details{
   orders orders @relation(fields: [order_id], references: [id])
   item_id Int?
   items Item? @relation(fields: [item_id],references: [id])
-  item_object Json
+  item_object Json?
   size Int?
   piece Int
   rate Int

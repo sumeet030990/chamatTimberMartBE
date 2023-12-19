@@ -80,18 +80,24 @@ const findById = async (id: string) => {
  * @param userData
  * @returns
  */
-const storeOrder = async (orderData: any, orderDetailData: any) => {
+const storeOrder = async (tx: any, orderData: any) => {
   try {
-    const savedOrder = await prisma.orders.create({
+    const savedOrder = await tx.orders.create({
       data: {
         ...orderData,
-        order_details: {
-          create: { ...orderDetailData },
-        },
       },
     });
 
-    // return savedOrder;
+    return savedOrder;
+
+    // return {
+    //   data: {
+    //     ...orderData,
+    //     order_details: {
+    //       create: { ...orderDetailData },
+    //     },
+    //   },
+    // };
     // const savedOrder = await prisma.orders.create({
     //   data: {
     //     user_id: 3,
@@ -154,7 +160,7 @@ const storeOrder = async (orderData: any, orderDetailData: any) => {
     //   },
     // });
 
-    return savedOrder;
+    // return savedOrder;
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }

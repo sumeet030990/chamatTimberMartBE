@@ -79,6 +79,16 @@ const findById = (id: string) => {
   return ItemRepository.findById(id);
 };
 
+const formatItemDataforStore = (itemData: any) => {
+  return {
+    name: itemData.label,
+    item_code: 'hsin',
+    item_type: itemData.type,
+    length: parseFloat(itemData.length),
+    width: parseFloat(itemData.width),
+    height: parseFloat(itemData.height),
+  };
+};
 /**
  * Store Item in DB
  * @param data
@@ -111,6 +121,7 @@ export default {
   fetchAllItems,
   fetchAllItemsAutocomplete,
   findById,
+  formatItemDataforStore,
   storeItem,
   updateItem,
   destroyItem,

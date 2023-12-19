@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
+import { isInteger } from 'lodash';
 import { getAuthUserFromHeaders, successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/OrderFormValidator';
+import ItemService from '../Services/ItemService';
 import OrderService from '../Services/OrderService';
 import UserService from '../Services/UserService';
 
@@ -45,6 +47,7 @@ const store = async (req: Request, res: Response, next: any) => {
     const {
       customer_details,
       customer_details: { user },
+      items,
     } = body;
     const validationResult = await storeRequest.validateAsync(body);
 
@@ -60,6 +63,27 @@ const store = async (req: Request, res: Response, next: any) => {
       const formattedUserData = UserService.formatUserDataFromOrder(customer_details);
       // save user data
       savedUser = await UserService.storeUser(formattedUserData);
+    }
+
+    // check if there's new item added, if yes then save it in item database
+    for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+      const element = items[itemIndex];
+      const itemData = element.item[0];
+
+      if (!isInteger(itemData.value)) {
+        if (itemData.value.includes('custom')) {
+          const formattedItemData = ItemService.formatItemDataforStore(itemData);
+          const item = await ItemService.storeItem(formattedItemData);
+          items[itemIndex] = {
+            value: item.id,
+            label: item.name,
+            type: item.item_type,
+            length: item.length,
+            width: item.width,
+            height: item.height,
+          };
+        }
+      }
     }
 
     // save data in order
