@@ -6,7 +6,6 @@ import createHttpError from 'http-errors';
  * @returns
  */
 const storeOrderDetails = async (tx: any, orderData: any) => {
-  console.log('orderData: ', orderData);
   try {
     const savedOrder = await tx.order_details.create({
       data: {

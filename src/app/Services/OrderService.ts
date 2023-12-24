@@ -45,7 +45,7 @@ const formatOrderData = (savedUser: any, orderData: any) => {
     total_typewise: orderData.total,
     bill_type: orderData.type,
     created_at: getCurrentDate(),
-    created_by_user: savedUser.value,
+    created_by_user: orderData.created_by,
   };
 };
 
@@ -72,8 +72,6 @@ const storeOrder = async (savedUser: any, orderData: Prisma.ordersCreateInput) =
 
     return { orderResult, orderDetailsResult };
   });
-
-  // const result = await OrderRepository.storeOrder(formattedOrderData, formattedOrderDetailsData);
 
   return result;
 };

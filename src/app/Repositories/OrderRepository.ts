@@ -12,11 +12,45 @@ const prisma = new PrismaClient();
 const fetchAllOrders = async (queryParams: fetchQueryParamsType) => {
   try {
     const { pageNumber, pageSize, sort_field, sort_order } = queryParams;
+    let sortField: any = {
+      [sort_field]: sort_order,
+    };
+    if (sort_field === 'createdByUser.name') {
+      sortField = {
+        createdByUser: {
+          name: sort_order,
+        },
+      };
+    }
+    if (sort_field === 'users.name') {
+      sortField = {
+        users: {
+          name: sort_order,
+        },
+      };
+    }
+
     const result = await prisma.orders.findMany({
+      select: {
+        id: true,
+        users: {
+          select: {
+            name: true,
+          },
+        },
+        bill_type: true,
+        invoice_date: true,
+        total: true,
+        createdByUser: {
+          select: {
+            name: true,
+          },
+        },
+      },
       skip: Number((pageNumber - 1) * pageSize),
       take: Number(pageSize),
       orderBy: {
-        [sort_field]: sort_order,
+        ...sortField,
       },
     });
 
