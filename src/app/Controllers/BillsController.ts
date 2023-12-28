@@ -80,18 +80,20 @@ const store = async (req: Request, res: Response, next: any) => {
         if (itemData.value.includes('custom')) {
           const formattedItemData = ItemService.formatItemDataforStore(itemData);
           const item = await ItemService.storeItem(formattedItemData);
-          items[itemIndex] = {
-            value: item.id,
-            label: item.name,
-            type: item.item_type,
-            length: item.length,
-            width: item.width,
-            height: item.height,
-          };
+          items[itemIndex].item = [
+            {
+              value: item.id,
+              label: item.name,
+              type: item.item_type,
+              length: item.length,
+              width: item.width,
+              height: item.height,
+            },
+          ];
         }
       }
     }
-
+    validationResult.items = items;
     // save data in bill
     const saveBill = await BillsService.storeBill(savedUser, validationResult);
 
@@ -123,7 +125,7 @@ const update = async (req: Request, res: Response, next: any) => {
       validateData.created_by = loggingUser.id;
     }
 
-    let savedUser = customer_details.user[0];
+    let savedUser = customer_details.user;
     // if user is new then add it to the DB
     if (user[0].customOption) {
       const formattedUserData = UserService.formatUserDataFromBill(customer_details);
@@ -146,18 +148,20 @@ const update = async (req: Request, res: Response, next: any) => {
         if (itemData.value.includes('custom')) {
           const formattedItemData = ItemService.formatItemDataforStore(itemData);
           const item = await ItemService.storeItem(formattedItemData);
-          items[itemIndex] = {
-            value: item.id,
-            label: item.name,
-            type: item.item_type,
-            length: item.length,
-            width: item.width,
-            height: item.height,
-          };
+          items[itemIndex].item = [
+            {
+              value: item.id,
+              label: item.name,
+              type: item.item_type,
+              length: item.length,
+              width: item.width,
+              height: item.height,
+            },
+          ];
         }
       }
     }
-
+    validateData.items = items;
     const updateBill = await BillsService.updateBill(params.id, savedUser, validateData);
 
     return res.json(successResponse(updateBill));

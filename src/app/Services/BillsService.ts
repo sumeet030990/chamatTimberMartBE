@@ -84,6 +84,7 @@ const storeBill = async (savedUser: any, validationData: Prisma.billsCreateInput
  */
 const updateBill = async (id: string, savedUser: object, validationData: object) => {
   const formattedBillData = formatBillData(validationData, savedUser);
+  console.log('formattedBillData: ', formattedBillData);
 
   const result = await prisma.$transaction(async tx => {
     // 1. Update Bill data.
