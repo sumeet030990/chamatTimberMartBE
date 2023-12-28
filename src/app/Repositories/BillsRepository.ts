@@ -134,16 +134,14 @@ const storeBill = async (tx: any, billData: any) => {
  * @param data object
  * @returns
  */
-const updateBill = async (id: string, data: any) => {
+const updateBill = async (tx: any, id: string, data: any) => {
   try {
-    const [result] = await prisma.$transaction([
-      prisma.bills.update({
-        where: {
-          id: Number(id),
-        },
-        data,
-      }),
-    ]);
+    const result = await tx.bills.update({
+      where: {
+        id: Number(id),
+      },
+      data,
+    });
 
     return result;
   } catch (error: any) {

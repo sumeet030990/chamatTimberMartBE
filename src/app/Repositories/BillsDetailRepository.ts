@@ -19,6 +19,15 @@ const storeBillDetails = async (tx: any, billData: any) => {
   }
 };
 
+const deleteByBillId = async (tx: any, id: string) => {
+  return tx.bill_details.deleteMany({
+    where: {
+      bill_id: Number(id),
+    },
+  });
+};
+
 export default {
   storeBillDetails,
+  deleteByBillId,
 };

@@ -3,7 +3,7 @@ import createHttpError from 'http-errors';
 import { isUndefined } from 'lodash';
 import { fetchQueryParamsType } from '../../types/commons';
 import { fetchUserByUserNameFilterParams, fetchUserQueryParamsType } from '../../types/userTypes';
-import { removeProtectedFieldsFromData } from '../../utils/helpers';
+import { convertSnakeCaseToTitleCase, removeProtectedFieldsFromData } from '../../utils/helpers';
 
 const prisma = new PrismaClient();
 
@@ -189,6 +189,15 @@ const storeUser = async (userData: Prisma.usersCreateInput) => {
 
     return savedUser;
   } catch (error: any) {
+    if (error.code === 'P2002') {
+      let keyword: any = convertSnakeCaseToTitleCase(error.meta.target);
+      keyword = keyword.split(' ');
+      keyword.splice(-1);
+      keyword = keyword.join(' ');
+      throw new createHttpError.UnprocessableEntity(
+        `${keyword} should be unique, (might be present in another company)`,
+      );
+    }
     throw new createHttpError.InternalServerError(error.message);
   }
 };

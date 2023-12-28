@@ -62,7 +62,13 @@ const store = async (req: Request, res: Response, next: any) => {
     if (user[0].customOption) {
       const formattedUserData = UserService.formatUserDataFromBill(customer_details);
       // save user data
-      savedUser = await UserService.storeUser(formattedUserData);
+      const savedUserResult = await UserService.storeUser(formattedUserData);
+      savedUser = [
+        {
+          label: savedUserResult.name,
+          value: savedUserResult.id,
+        },
+      ];
     }
 
     // check if there's new item added, if yes then save it in item database
@@ -103,10 +109,56 @@ const store = async (req: Request, res: Response, next: any) => {
  */
 const update = async (req: Request, res: Response, next: any) => {
   try {
-    const { body, params } = req;
-    const validateData = await updateRequest.validateAsync(body);
+    const { body, params, headers } = req;
+    const {
+      customer_details,
+      customer_details: { user },
+      items,
+    } = body;
 
-    const updateBill = await BillsService.updateBill(params.id, validateData);
+    const validateData = await updateRequest.validateAsync(body);
+    if (headers.authorization) {
+      const loggingUser: any = getAuthUserFromHeaders(headers);
+      customer_details.created_by = loggingUser.id;
+      validateData.created_by = loggingUser.id;
+    }
+
+    let savedUser = customer_details.user[0];
+    // if user is new then add it to the DB
+    if (user[0].customOption) {
+      const formattedUserData = UserService.formatUserDataFromBill(customer_details);
+      // save user data
+      const savedUserResult = await UserService.storeUser(formattedUserData);
+      savedUser = [
+        {
+          label: savedUserResult.name,
+          value: savedUserResult.id,
+        },
+      ];
+    }
+
+    // check if there's new item added, if yes then save it in item database
+    for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+      const element = items[itemIndex];
+      const itemData = element.item[0];
+
+      if (!isInteger(itemData.value)) {
+        if (itemData.value.includes('custom')) {
+          const formattedItemData = ItemService.formatItemDataforStore(itemData);
+          const item = await ItemService.storeItem(formattedItemData);
+          items[itemIndex] = {
+            value: item.id,
+            label: item.name,
+            type: item.item_type,
+            length: item.length,
+            width: item.width,
+            height: item.height,
+          };
+        }
+      }
+    }
+
+    const updateBill = await BillsService.updateBill(params.id, savedUser, validateData);
 
     return res.json(successResponse(updateBill));
   } catch (error: any) {

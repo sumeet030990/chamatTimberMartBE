@@ -174,9 +174,8 @@ CREATE TABLE `bills` (
 
 -- CreateTable
 CREATE TABLE `bill_details` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `bill_id` INTEGER NOT NULL,
-    `item_id` INTEGER NULL,
+    `item_id` INTEGER NOT NULL,
     `item_object` JSON NULL,
     `size` INTEGER NULL,
     `piece` INTEGER NOT NULL,
@@ -184,7 +183,7 @@ CREATE TABLE `bill_details` (
     `remark` VARCHAR(191) NULL,
     `sub_items` JSON NULL,
 
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `bill_details_bill_id_item_id_key`(`bill_id`, `item_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -248,4 +247,4 @@ ALTER TABLE `bills` ADD CONSTRAINT `bills_deleted_by_user_fkey` FOREIGN KEY (`de
 ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_bill_id_fkey` FOREIGN KEY (`bill_id`) REFERENCES `bills`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_item_id_fkey` FOREIGN KEY (`item_id`) REFERENCES `Item`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_item_id_fkey` FOREIGN KEY (`item_id`) REFERENCES `Item`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

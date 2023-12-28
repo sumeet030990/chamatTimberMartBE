@@ -221,15 +221,16 @@ model bills {
 }
 
 model bill_details{
-  id Int @id @default(autoincrement())
   bill_id Int
   bills bills @relation(fields: [bill_id], references: [id])
-  item_id Int?
-  items Item? @relation(fields: [item_id],references: [id])
+  item_id Int
+  items Item @relation(fields: [item_id],references: [id])
   item_object Json?
   size Int?
   piece Int
   rate Int
   remark String?
   sub_items Json?
+
+  @@unique([bill_id, item_id])
 }

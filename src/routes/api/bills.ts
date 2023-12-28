@@ -8,7 +8,7 @@ const router = Router();
 router.get('', [protectedRoutes, companyAccessCheck], BillsController.index);
 router.get('/:id', [protectedRoutes], BillsController.show);
 router.post('', [protectedRoutes, companyAccessCheck], BillsController.store);
-// router.put('/:id', [protectedRoutes], BillsController.update);
+router.put('/:id', [protectedRoutes], BillsController.update);
 // router.delete('/:id', [protectedRoutes], BillsController.destroy);
 
 export default router;

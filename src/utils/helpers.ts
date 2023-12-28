@@ -112,6 +112,17 @@ const getAuthUserFromHeaders = (headers: any) => {
   return authUser.userData;
 };
 
+/**
+ * Convert snake_case words to Title Case
+ * @param string
+ * @returns
+ */
+const convertSnakeCaseToTitleCase = (s: String) => {
+  return s
+    .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase()) // Initial char (after -/_)
+    .replace(/[-_]+(.)/g, (_, c) => ` ${c.toUpperCase()}`); // First char after each -/_
+};
+
 export {
   successResponse,
   errorResponse,
@@ -120,4 +131,5 @@ export {
   removeProtectedFieldsFromData,
   formatDataForDropdown,
   getAuthUserFromHeaders,
+  convertSnakeCaseToTitleCase,
 };
