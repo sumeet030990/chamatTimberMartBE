@@ -160,12 +160,12 @@ const deleteUser = (userId: string, loggedInUser: any = {}) => {
 };
 
 /**
- * From OrderController when user is new we need to save this user to db
+ * From BillController when user is new we need to save this user to db
  * so formatting the incoming data as per requirement
  * @param userData
  * @returns
  */
-const formatUserDataFromOrder = (userData: any) => {
+const formatUserDataFromBill = (userData: any) => {
   return {
     allow_login: false,
     name: userData?.user[0].label,
@@ -183,7 +183,7 @@ export default {
   fetchUserByUserName,
   findById,
   storeUser,
-  formatUserDataFromOrder,
+  formatUserDataFromBill,
   updateUser,
   deleteUser,
 };

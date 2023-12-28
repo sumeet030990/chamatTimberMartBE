@@ -120,9 +120,9 @@ model users {
   transaction_for_user   transaction[]       @relation("transaction_for_user")
   transaction_created_by transaction[]       @relation("transaction_created_by")
   transaction_deleted_by transaction[]       @relation("transaction_deleted_by")
-  order_for_user   orders[]       @relation("order_for_user")
-  order_created_by orders[]       @relation("order_created_by")
-  order_deleted_by orders[]       @relation("order_deleted_by")
+  bill_for_user   bills[]       @relation("bill_for_user")
+  bill_created_by bills[]       @relation("bill_created_by")
+  bill_deleted_by bills[]       @relation("bill_deleted_by")
 
 }
 
@@ -190,7 +190,7 @@ model Item {
   height     Float?
   status     Boolean   @default(true)
   deleted_at DateTime?
-  order_details order_details[]
+  bill_details bill_details[]
 }
 
 enum bill_type {
@@ -198,31 +198,32 @@ enum bill_type {
   retail
 }
 
-model orders {
+model bills {
   id         Int       @id @default(autoincrement())
   user_id         Int
-  users           users            @relation("order_for_user", fields: [user_id], references: [id])
+  users           users            @relation("bill_for_user", fields: [user_id], references: [id])
   user_object     Json
   city  String
   contact_number  String
   item_type String
+  item_object Json
   invoice_date  DateTime
   total Int
   total_typewise Json
   bill_type bill_type 
   created_at      DateTime @default(now())
   created_by_user Int
-  createdByUser   users    @relation("order_created_by", fields: [created_by_user], references: [id])
+  createdByUser   users    @relation("bill_created_by", fields: [created_by_user], references: [id])
   deleted_at      DateTime?
   deleted_by_user Int?
-  deletedByUser   users?    @relation("order_deleted_by", fields: [deleted_by_user], references: [id])
-  order_details  order_details[]
+  deletedByUser   users?    @relation("bill_deleted_by", fields: [deleted_by_user], references: [id])
+  bill_details  bill_details[]
 }
 
-model order_details{
+model bill_details{
   id Int @id @default(autoincrement())
-  order_id Int
-  orders orders @relation(fields: [order_id], references: [id])
+  bill_id Int
+  bills bills @relation(fields: [bill_id], references: [id])
   item_id Int?
   items Item? @relation(fields: [item_id],references: [id])
   item_object Json?

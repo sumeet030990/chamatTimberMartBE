@@ -2,15 +2,15 @@ import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isInteger } from 'lodash';
 import { getAuthUserFromHeaders, successResponse } from '../../utils/helpers';
-import { storeRequest, updateRequest } from '../FormValidators/OrderFormValidator';
+import { storeRequest, updateRequest } from '../FormValidators/BillFormValidator';
+import BillsService from '../Services/BillsService';
 import ItemService from '../Services/ItemService';
-import OrderService from '../Services/OrderService';
 import UserService from '../Services/UserService';
 
 const index = async (req: Request, res: Response, next: any) => {
   try {
     const reqQuery: any = req.query;
-    const data = await OrderService.fetchAllOrders(reqQuery);
+    const data = await BillsService.fetchAllBills(reqQuery);
 
     return res.json(successResponse(data));
   } catch (error: any) {
@@ -19,14 +19,14 @@ const index = async (req: Request, res: Response, next: any) => {
 };
 
 /**
- * Get Details of the Order of given id
+ * Get Details of the Bill of given id
  * @param req
  * @param res
  * @param next
  */
 const show = async (req: Request, res: Response, next: any) => {
   try {
-    const companyData = await OrderService.findById(req.params.id);
+    const companyData = await BillsService.findById(req.params.id);
 
     return res.json(successResponse(companyData));
   } catch (error: any) {
@@ -35,7 +35,7 @@ const show = async (req: Request, res: Response, next: any) => {
 };
 
 /**
- * Post api for Storing Order in DB
+ * Post api for Storing Bill in DB
  * @param req Request
  * @param res Response
  * @param next
@@ -60,7 +60,7 @@ const store = async (req: Request, res: Response, next: any) => {
     let savedUser = customer_details.user[0];
     // if user is new then add it to the DB
     if (user[0].customOption) {
-      const formattedUserData = UserService.formatUserDataFromOrder(customer_details);
+      const formattedUserData = UserService.formatUserDataFromBill(customer_details);
       // save user data
       savedUser = await UserService.storeUser(formattedUserData);
     }
@@ -86,10 +86,10 @@ const store = async (req: Request, res: Response, next: any) => {
       }
     }
 
-    // save data in order
-    const saveOrder = await OrderService.storeOrder(savedUser, validationResult);
+    // save data in bill
+    const saveBill = await BillsService.storeBill(savedUser, validationResult);
 
-    return res.json(successResponse({ saveOrder }));
+    return res.json(successResponse({ saveBill }));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
   }
@@ -106,16 +106,16 @@ const update = async (req: Request, res: Response, next: any) => {
     const { body, params } = req;
     const validateData = await updateRequest.validateAsync(body);
 
-    const updateOrder = await OrderService.updateOrder(params.id, validateData);
+    const updateBill = await BillsService.updateBill(params.id, validateData);
 
-    return res.json(successResponse(updateOrder));
+    return res.json(successResponse(updateBill));
   } catch (error: any) {
     next(error);
   }
 };
 
 /**
- * Delete Order from DB
+ * Delete Bill from DB
  *
  * @param req Request
  * @param res Response
@@ -125,7 +125,7 @@ const update = async (req: Request, res: Response, next: any) => {
 const destroy = async (req: Request, res: Response, next: any): Promise<Response> => {
   try {
     const { id } = req.params;
-    const result = await OrderService.deleteOrder(id);
+    const result = await BillsService.deleteBill(id);
 
     return res.json(successResponse({ result }));
   } catch (error: any) {

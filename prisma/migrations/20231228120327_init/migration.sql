@@ -152,13 +152,14 @@ CREATE TABLE `Item` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `orders` (
+CREATE TABLE `bills` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` INTEGER NOT NULL,
     `user_object` JSON NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `contact_number` VARCHAR(191) NOT NULL,
     `item_type` VARCHAR(191) NOT NULL,
+    `item_object` JSON NOT NULL,
     `invoice_date` DATETIME(3) NOT NULL,
     `total` INTEGER NOT NULL,
     `total_typewise` JSON NOT NULL,
@@ -172,9 +173,9 @@ CREATE TABLE `orders` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `order_details` (
+CREATE TABLE `bill_details` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `order_id` INTEGER NOT NULL,
+    `bill_id` INTEGER NOT NULL,
     `item_id` INTEGER NULL,
     `item_object` JSON NULL,
     `size` INTEGER NULL,
@@ -235,16 +236,16 @@ ALTER TABLE `todo` ADD CONSTRAINT `todo_task_for_user_id_fkey` FOREIGN KEY (`tas
 ALTER TABLE `todo` ADD CONSTRAINT `todo_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `orders` ADD CONSTRAINT `orders_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `bills` ADD CONSTRAINT `bills_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `orders` ADD CONSTRAINT `orders_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `bills` ADD CONSTRAINT `bills_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `orders` ADD CONSTRAINT `orders_deleted_by_user_fkey` FOREIGN KEY (`deleted_by_user`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `bills` ADD CONSTRAINT `bills_deleted_by_user_fkey` FOREIGN KEY (`deleted_by_user`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `order_details` ADD CONSTRAINT `order_details_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_bill_id_fkey` FOREIGN KEY (`bill_id`) REFERENCES `bills`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `order_details` ADD CONSTRAINT `order_details_item_id_fkey` FOREIGN KEY (`item_id`) REFERENCES `Item`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_item_id_fkey` FOREIGN KEY (`item_id`) REFERENCES `Item`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

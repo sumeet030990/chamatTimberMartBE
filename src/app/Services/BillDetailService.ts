@@ -1,17 +1,17 @@
 /**
- * Format Data for Order
+ * Format Data for Bill
  * @param savedUser
- * @param orderData
+ * @param billData
  * @returns
  */
-const formatOrderDetailData = (orderResult: any, orderData: any) => {
-  const { items } = orderData;
+const formatBillDetailData = (billResult: any, billData: any) => {
+  const { items } = billData;
   const result: any = [];
 
   for (let index = 0; index < items.length; index++) {
     const element = items[index];
-    const orderDetailsData = {
-      order_id: orderResult.id,
+    const billDetailsData = {
+      bill_id: billResult.id,
       item_id: element.item[0].value,
       item_object: element.item[0] || {},
       size: parseFloat(element.size),
@@ -21,12 +21,12 @@ const formatOrderDetailData = (orderResult: any, orderData: any) => {
       sub_items: element.subItems,
     };
 
-    result.push(orderDetailsData);
+    result.push(billDetailsData);
   }
 
   return result;
 };
 
 export default {
-  formatOrderDetailData,
+  formatBillDetailData,
 };

@@ -2,11 +2,11 @@ import config from 'config';
 import { Request, Response, Router } from 'express';
 import moment from 'moment';
 import authRoutes from './auth';
+import billsRoutes from './bills';
 import companyRoute from './company';
 import itemsRoutes from './items';
 import languagesRoute from './languages';
 import locationsRoute from './location';
-import ordersRoutes from './orders';
 import rolesRoutes from './roles';
 import transactionRoutes from './transactions';
 import userRoutes from './users';
@@ -21,7 +21,7 @@ router.use('/locations', locationsRoute);
 router.use('/companies', companyRoute);
 router.use('/transactions', transactionRoutes);
 router.use('/items', itemsRoutes);
-router.use('/orders', ordersRoutes);
+router.use('/bills', billsRoutes);
 
 // get server info
 router.use('/server-info', (req: Request, res: Response) => {

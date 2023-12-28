@@ -1,24 +1,24 @@
 import createHttpError from 'http-errors';
 
 /**
- * Store Order in DB
+ * Store Bill in DB
  * @param userData
  * @returns
  */
-const storeOrderDetails = async (tx: any, orderData: any) => {
+const storeBillDetails = async (tx: any, billData: any) => {
   try {
-    const savedOrder = await tx.order_details.create({
+    const savedBill = await tx.bill_details.create({
       data: {
-        ...orderData,
+        ...billData,
       },
     });
 
-    return savedOrder;
+    return savedBill;
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }
 };
 
 export default {
-  storeOrderDetails,
+  storeBillDetails,
 };
