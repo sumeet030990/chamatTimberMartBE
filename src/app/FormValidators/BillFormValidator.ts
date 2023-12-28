@@ -26,7 +26,7 @@ const itemSchema = Joi.object().keys({
   subItems: Joi.array().required(),
 });
 
-const orderObject = {
+const billObject = {
   customer_details: Joi.object().keys(customerInfoSchema).required(),
   total: Joi.object().required(),
   items: Joi.array().items(itemSchema).required(),
@@ -34,11 +34,11 @@ const orderObject = {
 };
 
 const storeRequest = Joi.object({
-  ...orderObject,
+  ...billObject,
 }).options({ abortEarly: false });
 
 const updateRequest = Joi.object({
-  ...orderObject,
+  ...billObject,
 }).options({ abortEarly: false });
 
 export { storeRequest, updateRequest };
