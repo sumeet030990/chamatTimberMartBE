@@ -6,7 +6,7 @@ const storeUserCompanyMappingData = async (userCompanyData: any, savedUser: any)
   const result = await prisma.$transaction([
     prisma.users_company.deleteMany({
       where: {
-        user_id: savedUser.id,
+        user_id: parseInt(savedUser.id),
       },
     }),
     prisma.users_company.createMany({
