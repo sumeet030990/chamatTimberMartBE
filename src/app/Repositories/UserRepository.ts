@@ -181,9 +181,9 @@ const findById = async (id: string) => {
  * @param userData
  * @returns
  */
-const storeUser = async (userData: Prisma.usersCreateInput) => {
+const storeUser = async (userData: Prisma.usersCreateInput, prismaTx: any = prisma) => {
   try {
-    const savedUser = await prisma.users.create({
+    const savedUser = await prismaTx.users.create({
       data: userData,
     });
 

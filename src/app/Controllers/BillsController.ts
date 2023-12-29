@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isInteger } from 'lodash';
@@ -7,6 +8,8 @@ import BillsService from '../Services/BillsService';
 import ItemService from '../Services/ItemService';
 import UserCompanyService from '../Services/UserCompanyService';
 import UserService from '../Services/UserService';
+
+const prisma = new PrismaClient();
 
 const index = async (req: Request, res: Response, next: any) => {
   try {
@@ -40,7 +43,7 @@ const show = async (req: Request, res: Response, next: any) => {
  * @param body
  * @returns
  */
-const checkIfNewUser = async (selectedCompany: string, body: any) => {
+const checkIfNewUser = async (selectedCompany: string, body: any, tx: any) => {
   const {
     customer_details,
     customer_details: { user },
@@ -51,8 +54,10 @@ const checkIfNewUser = async (selectedCompany: string, body: any) => {
   if (user[0].customOption) {
     const formattedUserData = UserService.formatUserDataFromBill(customer_details);
     // save user data
-    const savedUserResult = await UserService.storeUser(formattedUserData);
-    await UserCompanyService.storeUserCompanyMappingData([{ value: parseInt(selectedCompany) }], savedUserResult);
+    const savedUserResult = await UserService.storeUser(formattedUserData, tx);
+
+    // map saved user with the company
+    await UserCompanyService.storeUserCompanyMappingData([{ value: parseInt(selectedCompany) }], savedUserResult, tx);
     savedUser = [
       {
         label: savedUserResult.name,
@@ -64,7 +69,7 @@ const checkIfNewUser = async (selectedCompany: string, body: any) => {
   return savedUser;
 };
 
-const checkIfNewItem = async (items: any) => {
+const checkIfNewItem = async (items: any, tx: any) => {
   const processedItem = items;
   for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
     const element = items[itemIndex];
@@ -73,7 +78,7 @@ const checkIfNewItem = async (items: any) => {
     if (!isInteger(itemData.value)) {
       if (itemData.value.includes('custom')) {
         const formattedItemData = ItemService.formatItemDataforStore(itemData);
-        const item = await ItemService.storeItem(formattedItemData);
+        const item = await ItemService.storeItem(formattedItemData, tx);
         processedItem[itemIndex].item = [
           {
             value: item.id,
@@ -113,17 +118,21 @@ const store = async (req: Request, res: Response, next: any) => {
       validationResult.created_by = loggingUser.id;
     }
 
-    // if user is new then add it to the DB
-    const savedUser = await checkIfNewUser(selectedCompany, body);
+    const result = await prisma.$transaction(async tx => {
+      // if user is new then add it to the DB
+      const savedUser = await checkIfNewUser(selectedCompany, body, tx);
 
-    // check if there's new item added, if yes then save it in item database
-    const newItemData = await checkIfNewItem(items);
-    validationResult.items = newItemData;
+      // check if there's new item added, if yes then save it in item database
+      const newItemData = await checkIfNewItem(items, tx);
+      validationResult.items = newItemData;
 
-    // save data in bill
-    const saveBill = await BillsService.storeBill(savedUser, validationResult);
+      // save data in bill
+      const saveBill = await BillsService.storeBill(savedUser, validationResult, tx);
 
-    return res.json(successResponse({ saveBill }));
+      return { savedUser, saveBill };
+    });
+
+    return res.json(successResponse({ result }));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
   }
@@ -150,16 +159,20 @@ const update = async (req: Request, res: Response, next: any) => {
       validateData.created_by = loggingUser.id;
     }
 
-    // if user is new then add it to the DB
-    const savedUser = await checkIfNewUser(selectedCompany, body);
+    const result = await prisma.$transaction(async tx => {
+      // if user is new then add it to the DB
+      const savedUser = await checkIfNewUser(selectedCompany, body, tx);
 
-    // check if there's new item added, if yes then save it in item database
-    const newItemData = await checkIfNewItem(items);
+      // check if there's new item added, if yes then save it in item database
+      const newItemData = await checkIfNewItem(items, tx);
 
-    validateData.items = newItemData;
-    const updateBill = await BillsService.updateBill(params.id, savedUser, validateData);
+      validateData.items = newItemData;
+      const updateBill = await BillsService.updateBill(params.id, savedUser, validateData, tx);
 
-    return res.json(successResponse(updateBill));
+      return updateBill;
+    });
+
+    return res.json(successResponse(result));
   } catch (error: any) {
     next(error);
   }

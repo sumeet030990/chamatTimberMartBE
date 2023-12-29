@@ -137,8 +137,8 @@ const findById = async (id: string) => {
  * @returns
  */
 // const storeUser = async (data: Prisma.usersCreateInput) => {
-const storeUser = async (data: any) => {
-  return UserRepository.storeUser(data);
+const storeUser = async (data: any, prismaTx: any = {}) => {
+  return UserRepository.storeUser(data, prismaTx);
 };
 
 /**

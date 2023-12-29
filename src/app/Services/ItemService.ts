@@ -94,8 +94,8 @@ const formatItemDataforStore = (itemData: any) => {
  * @param data
  * @returns
  */
-const storeItem = (data: Prisma.ItemCreateInput) => {
-  return ItemRepository.storeItem(data);
+const storeItem = (data: Prisma.ItemCreateInput, prismaTx: any = {}) => {
+  return ItemRepository.storeItem(data, prismaTx);
 };
 
 /**

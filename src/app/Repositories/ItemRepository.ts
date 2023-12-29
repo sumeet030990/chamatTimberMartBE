@@ -96,9 +96,9 @@ const findById = async (id: string) => {
  * @param data
  * @returns
  */
-const storeItem = async (data: Prisma.ItemCreateInput) => {
+const storeItem = async (data: Prisma.ItemCreateInput, prismaTx: any = prisma) => {
   try {
-    const result = await prisma.item.create({
+    const result = await prismaTx.item.create({
       data,
     });
 

@@ -2,19 +2,18 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const storeUserCompanyMappingData = async (userCompanyData: any, savedUser: any) => {
-  const result = await prisma.$transaction([
-    prisma.users_company.deleteMany({
-      where: {
-        user_id: parseInt(savedUser.id),
-      },
-    }),
-    prisma.users_company.createMany({
-      data: userCompanyData,
-    }),
-  ]);
+const storeUserCompanyMappingData = async (userCompanyData: any, savedUser: any, prismaTx: any = prisma) => {
+  const deleteResult = prismaTx.users_company.deleteMany({
+    where: {
+      user_id: parseInt(savedUser.id),
+    },
+  });
 
-  return result;
+  const userCompanyResult = prismaTx.users_company.createMany({
+    data: userCompanyData,
+  });
+
+  return { deleteResult, userCompanyResult };
 };
 
 export default { storeUserCompanyMappingData };

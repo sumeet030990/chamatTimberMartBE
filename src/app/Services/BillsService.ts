@@ -55,26 +55,22 @@ const formatBillData = (billData: any, savedUser: any) => {
  * @param data
  * @returns
  */
-const storeBill = async (savedUser: any, validationData: Prisma.billsCreateInput) => {
+const storeBill = async (savedUser: any, validationData: Prisma.billsCreateInput, prismaTx: any = prisma) => {
   const formattedBillData = formatBillData(validationData, savedUser);
 
-  const result = await prisma.$transaction(async tx => {
-    // 1. Store Bill data.
-    const billResult = await BillsRepository.storeBill(tx, formattedBillData);
+  // 1. Store Bill data.
+  const billResult = await BillsRepository.storeBill(prismaTx, formattedBillData);
 
-    // 2. Verify that the sender's balance didn't go below zero.
-    const formattedBillDetailsData = BillDetailService.formatBillDetailData(billResult, validationData);
-    const billDetailsResult = [];
-    for (let index = 0; index < formattedBillDetailsData.length; index++) {
-      const element = formattedBillDetailsData[index];
-      const billDetailsElementResult = await BillsDetailRepository.storeBillDetails(tx, element);
-      billDetailsResult.push(billDetailsElementResult);
-    }
+  // 2. Verify that the sender's balance didn't go below zero.
+  const formattedBillDetailsData = BillDetailService.formatBillDetailData(billResult, validationData);
+  const billDetailsResult = [];
+  for (let index = 0; index < formattedBillDetailsData.length; index++) {
+    const element = formattedBillDetailsData[index];
+    const billDetailsElementResult = await BillsDetailRepository.storeBillDetails(prismaTx, element);
+    billDetailsResult.push(billDetailsElementResult);
+  }
 
-    return { billResult, billDetailsResult };
-  });
-
-  return result;
+  return { billResult, billDetailsResult };
 };
 
 /**
@@ -82,30 +78,25 @@ const storeBill = async (savedUser: any, validationData: Prisma.billsCreateInput
  * @param data
  * @returns
  */
-const updateBill = async (id: string, savedUser: object, validationData: object) => {
+const updateBill = async (id: string, savedUser: object, validationData: object, prismaTx: any = prisma) => {
   const formattedBillData = formatBillData(validationData, savedUser);
-  console.log('formattedBillData: ', formattedBillData);
 
-  const result = await prisma.$transaction(async tx => {
-    // 1. Update Bill data.
-    const billResult = await BillsRepository.updateBill(tx, id, formattedBillData);
+  // 1. Update Bill data.
+  const billResult = await BillsRepository.updateBill(prismaTx, id, formattedBillData);
 
-    // 2. delete bill_details by bill id
-    const deleteBillDetailsForUpdate = await BillsDetailRepository.deleteByBillId(tx, id);
+  // 2. delete bill_details by bill id
+  const deleteBillDetailsForUpdate = await BillsDetailRepository.deleteByBillId(prismaTx, id);
 
-    // 3. Verify that the sender's balance didn't go below zero.
-    const formattedBillDetailsData = BillDetailService.formatBillDetailData(billResult, validationData);
-    const billDetailsResult = [];
-    for (let index = 0; index < formattedBillDetailsData.length; index++) {
-      const element = formattedBillDetailsData[index];
-      const billDetailsElementResult = await BillsDetailRepository.storeBillDetails(tx, element);
-      billDetailsResult.push(billDetailsElementResult);
-    }
+  // 3. Verify that the sender's balance didn't go below zero.
+  const formattedBillDetailsData = BillDetailService.formatBillDetailData(billResult, validationData);
+  const billDetailsResult = [];
+  for (let index = 0; index < formattedBillDetailsData.length; index++) {
+    const element = formattedBillDetailsData[index];
+    const billDetailsElementResult = await BillsDetailRepository.storeBillDetails(prismaTx, element);
+    billDetailsResult.push(billDetailsElementResult);
+  }
 
-    return { billResult, deleteBillDetailsForUpdate, billDetailsResult };
-  });
-
-  return result;
+  return { billResult, deleteBillDetailsForUpdate, billDetailsResult };
 };
 
 /**
