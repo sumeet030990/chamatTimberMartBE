@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { successResponse } from '../../utils/helpers';
@@ -6,6 +7,8 @@ import AuthService from '../Services/AuthService';
 import UserBankDetailsService from '../Services/UserBankDetailsService';
 import UserCompanyService from '../Services/UserCompanyService';
 import UserService from '../Services/UserService';
+
+const prisma = new PrismaClient();
 
 const index = async (req: Request, res: Response, next: any) => {
   try {
@@ -39,9 +42,13 @@ const show = async (req: Request, res: Response, next: any) => {
   }
 };
 
-const addUserBankDetails = async (userData: any, userBankDetailsData: any) => {
+const addUserBankDetails = async (userData: any, userBankDetailsData: any, prismaTx: any = {}) => {
   if (userBankDetailsData.length > 0 && userData) {
-    const userBankDetailsResult = await UserBankDetailsService.addUserBankDetails(userData, userBankDetailsData);
+    const userBankDetailsResult = await UserBankDetailsService.addUserBankDetails(
+      userData,
+      userBankDetailsData,
+      prismaTx,
+    );
 
     return userBankDetailsResult;
   }
@@ -75,16 +82,22 @@ const store = async (req: Request, res: Response, next: any) => {
     const userBankDetailsData = validationResult.user_bank_details;
     delete validationResult.companies;
     delete validationResult.user_bank_details;
-    // save user data
-    const savedUser = await UserService.storeUser(validationResult);
-    let companyUserMapping: any = [];
-    if (companyData && savedUser) {
-      companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, savedUser);
-    }
 
-    const bankDetailsResult = await addUserBankDetails(savedUser, userBankDetailsData);
+    const result = await prisma.$transaction(async tx => {
+      // save user data
+      const savedUser = await UserService.storeUser(validationResult, tx);
+      let companyUserMapping: any = [];
 
-    return res.json(successResponse({ savedUser, companyUserMapping, bankDetailsResult }));
+      if (companyData && savedUser) {
+        companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, savedUser, tx);
+      }
+
+      const bankDetailsResult = await addUserBankDetails(savedUser, userBankDetailsData, tx);
+
+      return { savedUser, companyUserMapping, bankDetailsResult };
+    });
+
+    return res.json(successResponse(result));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
   }
@@ -111,15 +124,19 @@ const update = async (req: Request, res: Response, next: any) => {
     delete validateData.companies;
     delete validateData.user_bank_details;
 
-    const updateUser = await UserService.updateUser(params.id, validateData);
-    let companyUserMapping: any = [];
-    if (companyData && updateUser) {
-      companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, updateUser);
-    }
+    const result = await prisma.$transaction(async tx => {
+      const updateUser = await UserService.updateUser(params.id, validateData, tx);
+      let companyUserMapping: any = [];
+      if (companyData && updateUser) {
+        companyUserMapping = await UserCompanyService.storeUserCompanyMappingData(companyData, updateUser, tx);
+      }
 
-    const bankDetailsResult = await addUserBankDetails(updateUser, userBankDetailsData);
+      const bankDetailsResult = await addUserBankDetails(updateUser, userBankDetailsData, tx);
 
-    return res.json(successResponse({ updateUser, companyUserMapping, bankDetailsResult }));
+      return { updateUser, companyUserMapping, bankDetailsResult };
+    });
+
+    return res.json(successResponse(result));
   } catch (error: any) {
     next(error);
   }

@@ -146,8 +146,8 @@ const storeUser = async (data: any, prismaTx: any = {}) => {
  * @param data
  * @returns
  */
-const updateUser = async (id: string, data: object) => {
-  return UserRepository.updateUser(id, data);
+const updateUser = async (id: string, data: object, tx: any = {}) => {
+  return UserRepository.updateUser(id, data, tx);
 };
 
 /**

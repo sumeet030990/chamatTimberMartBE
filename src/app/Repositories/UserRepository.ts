@@ -181,7 +181,7 @@ const findById = async (id: string) => {
  * @param userData
  * @returns
  */
-const storeUser = async (userData: Prisma.usersCreateInput, prismaTx: any = prisma) => {
+const storeUser = async (userData: Prisma.usersCreateInput, prismaTx: any = {}) => {
   try {
     const savedUser = await prismaTx.users.create({
       data: userData,
@@ -208,16 +208,14 @@ const storeUser = async (userData: Prisma.usersCreateInput, prismaTx: any = pris
  * @param data object
  * @returns
  */
-const updateUser = async (id: string, data: any) => {
+const updateUser = async (id: string, data: any, prismaTx: any = {}) => {
   try {
-    const [result] = await prisma.$transaction([
-      prisma.users.update({
-        where: {
-          id: Number(id),
-        },
-        data,
-      }),
-    ]);
+    const result = await prismaTx.users.update({
+      where: {
+        id: Number(id),
+      },
+      data,
+    });
 
     return result;
   } catch (error: any) {

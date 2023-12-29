@@ -26,7 +26,7 @@ const userObject = {
 
 const storeRequest = Joi.object({
   ...userObject,
-  password: Joi.string().min(3).max(50).required(),
+  password: Joi.string().min(3).max(50).allow('', null),
 }).options({ abortEarly: false });
 
 const updateRequest = Joi.object({
@@ -34,6 +34,6 @@ const updateRequest = Joi.object({
 }).options({ abortEarly: false });
 
 const updatePasswordRequest = Joi.object({
-  password: Joi.string().min(3).max(20),
+  password: Joi.string().min(3).max(20).allow('', null),
 });
 export { storeRequest, updateRequest, updatePasswordRequest };

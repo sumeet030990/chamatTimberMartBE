@@ -1,6 +1,6 @@
 import UserBankDetailsRepository from '../Repositories/UserBankDetailsRepository';
 
-const addUserBankDetails = (userData: any, bankDetailsData: any) => {
+const addUserBankDetails = (userData: any, bankDetailsData: any, prismaTx: any) => {
   const formattedData = bankDetailsData.map((data: any) => {
     return {
       user_id: userData.id,
@@ -13,7 +13,7 @@ const addUserBankDetails = (userData: any, bankDetailsData: any) => {
     };
   });
 
-  return UserBankDetailsRepository.addUserBankDetails(userData, formattedData);
+  return UserBankDetailsRepository.addUserBankDetails(userData, formattedData, prismaTx);
 };
 
 export default { addUserBankDetails };
