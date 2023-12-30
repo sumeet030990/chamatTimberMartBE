@@ -76,7 +76,7 @@ model users {
   id                         Int       @id @default(autoincrement())
   name                       String    @unique @db.VarChar(50)
   allow_login                Boolean   @default(true)
-  user_name                  String?   @unique @db.VarChar(50)
+  user_name                  String?   @db.VarChar(50)
   password                   String?
   email_id                   String?   @db.VarChar(100)
   user_role                  roles     @relation(fields: [role_id], references: [id])
