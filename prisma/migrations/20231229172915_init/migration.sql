@@ -103,6 +103,7 @@ CREATE TABLE `user_balance` (
     `company_id` INTEGER NOT NULL,
     `amount` INTEGER NOT NULL DEFAULT 0,
 
+    UNIQUE INDEX `user_balance_user_id_company_id_key`(`user_id`, `company_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

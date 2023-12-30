@@ -177,6 +177,17 @@ const formatUserDataFromBill = (userData: any) => {
   };
 };
 
+/**
+ * Update User Account balance
+ * @param userId
+ * @param totalAmount
+ * @param prismaTx
+ * @returns
+ */
+const updateAccountBalance = (userId: number, selectedCompany: number, totalAmount: number, prismaTx: any) => {
+  return UserRepository.updateAccountBalance(userId, selectedCompany, totalAmount, prismaTx);
+};
+
 export default {
   fetchAllUsers,
   fetchAllUsersForAutocomplete,
@@ -186,4 +197,5 @@ export default {
   formatUserDataFromBill,
   updateUser,
   deleteUser,
+  updateAccountBalance,
 };

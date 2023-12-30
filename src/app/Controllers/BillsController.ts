@@ -127,9 +127,17 @@ const store = async (req: Request, res: Response, next: any) => {
       validationResult.items = newItemData;
 
       // save data in bill
-      const saveBill = await BillsService.storeBill(savedUser, validationResult, tx);
+      const saveBill: any = await BillsService.storeBill(savedUser, validationResult, tx);
 
-      return { savedUser, saveBill };
+      // add debit entry for the user
+      const debitTotalAmount = await UserService.updateAccountBalance(
+        parseInt(savedUser[0].value),
+        parseInt(selectedCompany),
+        parseFloat(validationResult.total.total),
+        tx,
+      );
+
+      return { savedUser, saveBill, debitTotalAmount };
     });
 
     return res.json(successResponse({ result }));
@@ -169,7 +177,30 @@ const update = async (req: Request, res: Response, next: any) => {
       validateData.items = newItemData;
       const updateBill = await BillsService.updateBill(params.id, savedUser, validateData, tx);
 
-      return updateBill;
+      // add debit entry for the user
+      // fetch old Bill
+      const billDataBeforeUpdate = await BillsService.findById(params.id);
+      let totalAmountValue = 0;
+      if (billDataBeforeUpdate) {
+        const oldBillTotal = billDataBeforeUpdate.total;
+        const currentBillTotal = validateData.total.total;
+        // if amount is increased
+        if (oldBillTotal < currentBillTotal) {
+          totalAmountValue = (currentBillTotal - oldBillTotal) * -1;
+        } else if (oldBillTotal > currentBillTotal) {
+          // if amount is decreased
+          totalAmountValue = oldBillTotal - currentBillTotal;
+        }
+      }
+
+      const debitTotalAmount = await UserService.updateAccountBalance(
+        parseInt(savedUser[0].value),
+        parseInt(selectedCompany),
+        totalAmountValue,
+        tx,
+      );
+
+      return { updateBill, debitTotalAmount };
     });
 
     return res.json(successResponse(result));

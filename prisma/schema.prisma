@@ -142,6 +142,8 @@ model user_balance {
   company_id Int
   company    company @relation(fields: [company_id], references: [id])
   amount     Int     @default(0)
+
+  @@unique([user_id, company_id])
 }
 
 enum transaction_type {

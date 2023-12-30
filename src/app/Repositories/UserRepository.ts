@@ -255,16 +255,56 @@ const deleteUser = async (userId: string, loggedInUser: any = {}) => {
  * @returns
  */
 const changePassword = async (userId: string, data: string) => {
-  const result = await prisma.users.update({
-    where: {
-      id: Number(userId),
-    },
-    data: {
-      password: data,
-    },
-  });
+  try {
+    const result = await prisma.users.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        password: data,
+      },
+    });
 
-  return result;
+    return result;
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
+};
+
+/**
+ * Update User Account balance
+ * @param userId
+ * @param totalAmount
+ * @param prismaTx
+ * @returns
+ */
+const updateAccountBalance = async (userId: number, selectedCompany: number, totalAmount: number, prismaTx: any) => {
+  try {
+    const userBalance = await prismaTx.user_balance.findFirst({
+      where: {
+        user_id: userId,
+        company_id: selectedCompany,
+      },
+    });
+
+    const result = await prismaTx.user_balance.upsert({
+      where: {
+        id: userBalance?.id || 0,
+      },
+      create: {
+        user_id: userId,
+        company_id: selectedCompany,
+        amount: -totalAmount,
+      },
+      update: {
+        amount: (userBalance?.amount || 0) + totalAmount,
+      },
+    });
+
+    return result;
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
 };
 
 export default {
@@ -276,4 +316,5 @@ export default {
   updateUser,
   deleteUser,
   changePassword,
+  updateAccountBalance,
 };
