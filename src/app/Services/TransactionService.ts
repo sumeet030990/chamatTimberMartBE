@@ -28,8 +28,8 @@ const fetchTransactionById = (transactionId: string) => {
  *
  * @returns
  */
-const storeTransaction = (data: Prisma.transactionCreateInput, userBalanceDetail: any) => {
-  return TransactionRepository.storeTransaction(data, userBalanceDetail);
+const storeTransaction = (data: Prisma.transactionCreateInput, userBalanceDetail: any, tx: any) => {
+  return TransactionRepository.storeTransaction(data, userBalanceDetail, tx);
 };
 
 /**

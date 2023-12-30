@@ -78,26 +78,24 @@ const fetchTransactionById = async (transactionId: string) => {
  * @param queryParams
  * @returns
  */
-const storeTransaction = async (data: any, userBalanceDetail: any) => {
+const storeTransaction = async (data: any, userBalanceDetail: any, tx: any) => {
   try {
     const amount = data.type === 'cr' ? userBalanceDetail.amount - data.amount : userBalanceDetail.amount + data.amount;
 
-    const result = await prisma.$transaction([
-      prisma.transaction.create({
-        data,
-      }),
-      prisma.user_balance.update({
-        where: {
-          id: userBalanceDetail.id,
-        },
-        data: {
-          amount,
-        },
-      }),
-    ]);
+    const transactionResult = await tx.transaction.create({
+      data,
+    });
+    const userUpdateBalanceResult = await tx.user_balance.update({
+      where: {
+        id: userBalanceDetail.id,
+      },
+      data: {
+        amount,
+      },
+    });
 
     return {
-      data: result,
+      data: { transactionResult, userUpdateBalanceResult },
     };
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);

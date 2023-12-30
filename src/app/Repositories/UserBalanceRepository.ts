@@ -1,18 +1,15 @@
-import { PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
-
-const prisma = new PrismaClient();
 
 /**
  * Get User Balance Data
  * @param queryParams
  * @returns
  */
-const getUserBalanceDataByUserId = async (userId: number, companyId: number) => {
+const getUserBalanceDataByUserId = async (userId: number, companyId: number, tx: any) => {
   try {
     let result = null;
 
-    result = await prisma.user_balance.findFirst({
+    result = await tx.user_balance.findFirst({
       where: {
         user_id: userId,
         company_id: companyId,
@@ -20,7 +17,7 @@ const getUserBalanceDataByUserId = async (userId: number, companyId: number) => 
     });
 
     if (result === null) {
-      result = await prisma.user_balance.create({
+      result = await tx.user_balance.create({
         data: { user_id: userId, company_id: companyId, amount: 0 },
       });
     }
