@@ -6,8 +6,8 @@ import UserBalanceRepository from '../Repositories/UserBalanceRepository';
  *
  * @returns
  */
-const getUserBalanceDataByUserId = (userId: number, companyId: number) => {
-  return UserBalanceRepository.getUserBalanceDataByUserId(userId, companyId);
+const getUserBalanceDataByUserId = (userId: number, companyId: number, tx: any) => {
+  return UserBalanceRepository.getUserBalanceDataByUserId(userId, companyId, tx);
 };
 
 export default {
