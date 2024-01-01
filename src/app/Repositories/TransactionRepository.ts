@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
 import { fetchQueryParamsType } from '../../types/commons';
+import { CREDIT } from '../../utils/constant';
 import { getCurrentDate } from '../../utils/dateTimeConversions';
 
 const prisma = new PrismaClient();
@@ -80,7 +81,8 @@ const fetchTransactionById = async (transactionId: string) => {
  */
 const storeTransaction = async (data: any, userBalanceDetail: any, tx: any) => {
   try {
-    const amount = data.type === 'cr' ? userBalanceDetail.amount - data.amount : userBalanceDetail.amount + data.amount;
+    const amount =
+      data.type === CREDIT ? userBalanceDetail.amount - data.amount : userBalanceDetail.amount + data.amount;
 
     const transactionResult = await tx.transaction.create({
       data,

@@ -101,11 +101,7 @@ const fetchAllAccountStatements = async (queryParams: any) => {
  */
 const store = async (body: any, prismaTx: any = {}) => {
   try {
-    let prismaClientTx = prismaTx;
-    if (Object.keys(prismaClientTx).length) {
-      prismaClientTx = prisma;
-    }
-    const result = await prismaClientTx.account_statement.create({
+    const result = await prismaTx.account_statement.create({
       data: body,
     });
 

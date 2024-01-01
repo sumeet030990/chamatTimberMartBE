@@ -164,6 +164,7 @@ CREATE TABLE `bills` (
     `total` INTEGER NOT NULL,
     `total_typewise` JSON NOT NULL,
     `bill_type` ENUM('whole_sale_bill', 'retail') NOT NULL,
+    `bill_remark` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_by_user` INTEGER NOT NULL,
     `deleted_at` DATETIME(3) NULL,
@@ -188,6 +189,7 @@ CREATE TABLE `bill_details` (
 
 -- CreateTable
 CREATE TABLE `account_statement` (
+    `id` VARCHAR(191) NOT NULL,
     `created_for` INTEGER NOT NULL,
     `company_id` INTEGER NOT NULL,
     `bill_id` INTEGER NULL,
@@ -198,7 +200,7 @@ CREATE TABLE `account_statement` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_by_user` INTEGER NOT NULL,
 
-    UNIQUE INDEX `account_statement_created_for_company_id_created_at_key`(`created_for`, `company_id`, `created_at`)
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -266,6 +268,12 @@ ALTER TABLE `bill_details` ADD CONSTRAINT `bill_details_item_id_fkey` FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE `account_statement` ADD CONSTRAINT `account_statement_created_for_fkey` FOREIGN KEY (`created_for`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `account_statement` ADD CONSTRAINT `account_statement_bill_id_fkey` FOREIGN KEY (`bill_id`) REFERENCES `bills`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `account_statement` ADD CONSTRAINT `account_statement_transaction_id_fkey` FOREIGN KEY (`transaction_id`) REFERENCES `transaction`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `account_statement` ADD CONSTRAINT `account_statement_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

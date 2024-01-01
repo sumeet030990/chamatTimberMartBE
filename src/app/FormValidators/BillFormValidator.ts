@@ -31,6 +31,9 @@ const billObject = {
   total: Joi.object().required(),
   items: Joi.array().items(itemSchema).required(),
   type: Joi.string().required(),
+  bill_remark: Joi.string().allow('', null),
+  amount_paid: Joi.number().required(),
+  payment_mode: Joi.string().allow('', null),
 };
 
 const storeRequest = Joi.object({

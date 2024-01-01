@@ -45,6 +45,7 @@ const formatBillData = (billData: any, savedUser: any) => {
     total: parseFloat(billData.total.total),
     total_typewise: billData.total,
     bill_type: billData.type,
+    bill_remark: billData.bill_remark,
     created_at: getCurrentDate(),
     created_by_user: billData.created_by,
   };

@@ -217,6 +217,7 @@ model bills {
   total             Int
   total_typewise    Json
   bill_type         bill_type
+  bill_remark       String?
   created_at        DateTime            @default(now())
   created_by_user   Int
   createdByUser     users               @relation("bill_created_by", fields: [created_by_user], references: [id])
@@ -243,19 +244,18 @@ model bill_details {
 }
 
 model account_statement {
+  id               String           @id @default(uuid())
   created_for      Int
   created_for_user users            @relation(fields: [created_for], references: [id])
   company_id       Int
+  bills            bills?           @relation(fields: [bill_id], references: [id], onDelete: Cascade)
+  transaction      transaction?     @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
   bill_id          Int?
-  bills            bills?           @relation(fields: [bill_id], references: [id])
   transaction_id   Int?
-  transaction      transaction?     @relation(fields: [transaction_id], references: [id])
   statement        String
   amount           Int
   transaction_type transaction_type
   created_at       DateTime         @default(now())
   created_by_user  Int
   createdByUser    users            @relation("statement_created_by", fields: [created_by_user], references: [id])
-
-  @@unique([created_for, company_id, created_at])
 }

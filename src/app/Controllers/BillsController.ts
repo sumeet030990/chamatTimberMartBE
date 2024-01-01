@@ -2,12 +2,15 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isInteger } from 'lodash';
+import { CREDIT, DEBIT } from '../../utils/constant';
 import { getCurrentDate } from '../../utils/dateTimeConversions';
 import { getAuthUserFromHeaders, successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/BillFormValidator';
 import AccountStatementService from '../Services/AccountStatementService';
 import BillsService from '../Services/BillsService';
 import ItemService from '../Services/ItemService';
+import TransactionService from '../Services/TransactionService';
+import UserBalanceService from '../Services/UserBalanceService';
 import UserCompanyService from '../Services/UserCompanyService';
 import UserService from '../Services/UserService';
 
@@ -121,17 +124,17 @@ const store = async (req: Request, res: Response, next: any) => {
     }
 
     const result = await prisma.$transaction(async tx => {
-      // if user is new then add it to the DB
+      // Step1: if user is new then add it to the DB
       const savedUser = await checkIfNewUser(selectedCompany, body, tx);
 
-      // check if there's new item added, if yes then save it in item database
+      // Step2:  check if there's new item added, if yes then save it in item database
       const newItemData = await checkIfNewItem(items, tx);
       validationResult.items = newItemData;
 
-      // save data in bill
+      // Step3: save data in bill
       const saveBill: any = await BillsService.storeBill(savedUser, validationResult, tx);
 
-      // add debit entry for the user
+      // Step 4: add debit entry for the user
       const debitTotalAmount = await UserService.updateAccountBalance(
         parseInt(savedUser[0].value),
         parseInt(selectedCompany),
@@ -139,21 +142,67 @@ const store = async (req: Request, res: Response, next: any) => {
         tx,
       );
 
-      // add details in account statement
-      const accountStatementBody = {
+      // Step 5: add details in account statement
+      const accountStatementBodyForBill = {
         created_for: parseInt(savedUser[0].value),
         company_id: parseInt(selectedCompany),
         bill_id: parseInt(saveBill.billResult.id),
         statement: `Invoice created: #${saveBill.billResult.id}`,
         amount: parseFloat(validationResult.total.total),
-        transaction_type: 'cr',
-        created_at: getCurrentDate(),
+        transaction_type: CREDIT,
         created_by_user: validationResult.created_by,
       };
 
-      const accountStatement = await AccountStatementService.store(accountStatementBody, tx);
+      const accountStatement = await AccountStatementService.store(accountStatementBodyForBill, tx);
 
-      return { savedUser, saveBill, debitTotalAmount, accountStatement };
+      // Step 6: add transaction in account statement
+      if (parseFloat(validationResult.amount_paid) === 0) {
+        return { savedUser, saveBill, debitTotalAmount, accountStatement };
+      }
+
+      const transactionBody = {
+        user_id: savedUser[0].value,
+        amount: parseFloat(validationResult.amount_paid),
+        type: DEBIT,
+        date: getCurrentDate(),
+        payment_mode: validationResult.payment_mode,
+        company_id: parseInt(selectedCompany),
+        note: `${validationResult.payment_mode.toUpperCase()} payment against invoice #${saveBill.billResult.id}`,
+        created_by: validationResult.created_by,
+      };
+
+      const userBalanceDetail = await UserBalanceService.getUserBalanceDataByUserId(
+        validationResult.user_id,
+        validationResult.company_id,
+        tx,
+      );
+
+      const transactionResult = await TransactionService.storeTransaction(transactionBody, userBalanceDetail, tx);
+
+      // Step 7: add payment details in account statement
+      const accountStatementBodyForTransaction = {
+        created_for: parseInt(savedUser[0].value),
+        company_id: parseInt(selectedCompany),
+        transaction_id: parseInt(transactionResult.transactionResult.id),
+        statement: `${validationResult.payment_mode.toUpperCase()} payment against invoice: #${saveBill.billResult.id}`,
+        amount: parseFloat(validationResult.amount_paid),
+        transaction_type: DEBIT,
+        created_by_user: validationResult.created_by,
+      };
+
+      const accountStatementForTransaction = await AccountStatementService.store(
+        accountStatementBodyForTransaction,
+        tx,
+      );
+
+      return {
+        savedUser,
+        saveBill,
+        debitTotalAmount,
+        accountStatement,
+        transactionResult,
+        accountStatementForTransaction,
+      };
     });
 
     return res.json(successResponse({ result }));

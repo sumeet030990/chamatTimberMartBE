@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { fetchQueryParamsType } from '../../types/commons';
 import TransactionRepository from '../Repositories/TransactionRepository';
 
@@ -28,7 +27,7 @@ const fetchTransactionById = (transactionId: string) => {
  *
  * @returns
  */
-const storeTransaction = (data: Prisma.transactionCreateInput, userBalanceDetail: any, tx: any) => {
+const storeTransaction = (data: any, userBalanceDetail: any, tx: any) => {
   return TransactionRepository.storeTransaction(data, userBalanceDetail, tx);
 };
 
