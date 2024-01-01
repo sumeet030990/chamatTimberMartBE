@@ -20,7 +20,31 @@ export const convertToDdMmYyString = (date: any) => {
  * @returns Data
  */
 export const convertDateStringToDate = (date: string) => {
-  const dateMomentObject = moment(date, DATE_FORMAT).utc(); // 1st argument - string, 2nd argument - format
+  const dateString = date;
+  const inputFormat = 'DD/MM/YY';
+  const specificTime = '12:00:00'; // You can adjust this to the time you prefer
 
-  return dateMomentObject.toDate(); // convert moment.js object to Date object
+  // Concatenate the date string and time
+  const dateWithTime = `${dateString} ${specificTime}`;
+
+  // Parse the date string with the specified format and strict parsing
+  const dateObject = moment(dateWithTime, `${inputFormat} HH:mm:ss`, true).utc();
+
+  return dateObject;
+};
+
+export const subtractDateByDays = (date: string, numberOfDays: number) => {
+  const dateObject = convertDateStringToDate(date);
+  // Subtract one day
+  const result = moment(dateObject).subtract(numberOfDays, 'days').toDate();
+
+  return result;
+};
+
+export const addDateByDays = (date: string, numberOfDays: number) => {
+  const dateObject = convertDateStringToDate(date);
+  // Subtract one day
+  const result = moment(dateObject).add(numberOfDays, 'days').toDate();
+
+  return result;
 };

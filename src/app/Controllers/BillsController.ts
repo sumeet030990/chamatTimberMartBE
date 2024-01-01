@@ -2,8 +2,10 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isInteger } from 'lodash';
+import { getCurrentDate } from '../../utils/dateTimeConversions';
 import { getAuthUserFromHeaders, successResponse } from '../../utils/helpers';
 import { storeRequest, updateRequest } from '../FormValidators/BillFormValidator';
+import AccountStatementService from '../Services/AccountStatementService';
 import BillsService from '../Services/BillsService';
 import ItemService from '../Services/ItemService';
 import UserCompanyService from '../Services/UserCompanyService';
@@ -137,7 +139,21 @@ const store = async (req: Request, res: Response, next: any) => {
         tx,
       );
 
-      return { savedUser, saveBill, debitTotalAmount };
+      // add details in account statement
+      const accountStatementBody = {
+        created_for: parseInt(savedUser[0].value),
+        company_id: parseInt(selectedCompany),
+        bill_id: parseInt(saveBill.billResult.id),
+        statement: `Invoice created: #${saveBill.billResult.id}`,
+        amount: parseFloat(validationResult.total.total),
+        transaction_type: 'cr',
+        created_at: getCurrentDate(),
+        created_by_user: validationResult.created_by,
+      };
+
+      const accountStatement = await AccountStatementService.store(accountStatementBody, tx);
+
+      return { savedUser, saveBill, debitTotalAmount, accountStatement };
     });
 
     return res.json(successResponse({ result }));
@@ -200,7 +216,20 @@ const update = async (req: Request, res: Response, next: any) => {
         tx,
       );
 
-      return { updateBill, debitTotalAmount };
+      // update details in account statement
+      const accountStatementBody = {
+        created_for: parseInt(savedUser[0].value),
+        statement: `Invoice created: #${updateBill.billResult.id}`,
+        amount: parseFloat(validateData.total.total),
+      };
+
+      const accountStatement = await AccountStatementService.updateByBillId(
+        parseInt(updateBill.billResult.id),
+        accountStatementBody,
+        tx,
+      );
+
+      return { updateBill, debitTotalAmount, accountStatement };
     });
 
     return res.json(successResponse(result));

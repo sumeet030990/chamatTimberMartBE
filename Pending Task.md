@@ -9,7 +9,12 @@
 </tr>
 <tr>
   <td>Add User</td>
-  <td>User Name Validation</td>
+  <td>User Name Validation Constraint</td>
+  <td>Name needs to be unique around multiple companies</td>
+</tr>
+<tr>
+  <td>Add User</td>
+  <td>User Name Validation Functionality</td>
   <td>Fix allow login radio button and username and password display according to the change in value</td>
 </tr>
 <tr>

@@ -94,9 +94,7 @@ const storeTransaction = async (data: any, userBalanceDetail: any, tx: any) => {
       },
     });
 
-    return {
-      data: { transactionResult, userUpdateBalanceResult },
-    };
+    return { transactionResult, userUpdateBalanceResult };
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
   }

@@ -1,6 +1,7 @@
 import config from 'config';
 import { Request, Response, Router } from 'express';
 import moment from 'moment';
+import accountStatementRoutes from './accountStatement';
 import authRoutes from './auth';
 import billsRoutes from './bills';
 import companyRoute from './company';
@@ -22,6 +23,7 @@ router.use('/companies', companyRoute);
 router.use('/transactions', transactionRoutes);
 router.use('/items', itemsRoutes);
 router.use('/bills', billsRoutes);
+router.use('/account-statement', accountStatementRoutes);
 
 // get server info
 router.use('/server-info', (req: Request, res: Response) => {

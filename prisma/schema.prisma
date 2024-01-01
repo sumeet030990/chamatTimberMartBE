@@ -74,7 +74,7 @@ enum gst_type {
 
 model users {
   id                         Int       @id @default(autoincrement())
-  name                       String    @unique @db.VarChar(50)
+  name                       String    @db.VarChar(50)
   allow_login                Boolean   @default(true)
   user_name                  String?   @db.VarChar(50)
   password                   String?
@@ -120,10 +120,13 @@ model users {
   transaction_for_user   transaction[]       @relation("transaction_for_user")
   transaction_created_by transaction[]       @relation("transaction_created_by")
   transaction_deleted_by transaction[]       @relation("transaction_deleted_by")
-  bill_for_user   bills[]       @relation("bill_for_user")
-  bill_created_by bills[]       @relation("bill_created_by")
-  bill_deleted_by bills[]       @relation("bill_deleted_by")
+  bill_for_user          bills[]             @relation("bill_for_user")
+  bill_created_by        bills[]             @relation("bill_created_by")
+  bill_deleted_by        bills[]             @relation("bill_deleted_by")
+  account_statement      account_statement[]
+  statement_created_by   account_statement[] @relation("statement_created_by")
 
+  @@unique([name])
 }
 
 model users_company {
@@ -152,23 +155,24 @@ enum transaction_type {
 }
 
 model transaction {
-  id              Int              @id @default(autoincrement())
-  user_id         Int
-  users           users            @relation("transaction_for_user", fields: [user_id], references: [id])
-  company_id      Int
-  company         company          @relation(fields: [company_id], references: [id])
-  amount          Int              @default(0)
-  type            transaction_type
-  date            DateTime
-  payment_mode    String
-  payment_details String?
-  note            String?
-  created_at      DateTime         @default(now())
-  created_by      Int
-  createdByUser   users            @relation("transaction_created_by", fields: [created_by], references: [id])
-  deleted_at      DateTime?
-  deleted_by      Int?
-  deletedByUser   users?           @relation("transaction_deleted_by", fields: [deleted_by], references: [id])
+  id                Int                 @id @default(autoincrement())
+  user_id           Int
+  users             users               @relation("transaction_for_user", fields: [user_id], references: [id])
+  company_id        Int
+  company           company             @relation(fields: [company_id], references: [id])
+  amount            Int                 @default(0)
+  type              transaction_type
+  date              DateTime
+  payment_mode      String
+  payment_details   String?
+  note              String?
+  created_at        DateTime            @default(now())
+  created_by        Int
+  createdByUser     users               @relation("transaction_created_by", fields: [created_by], references: [id])
+  deleted_at        DateTime?
+  deleted_by        Int?
+  deletedByUser     users?              @relation("transaction_deleted_by", fields: [deleted_by], references: [id])
+  account_statement account_statement[]
 }
 
 model todo {
@@ -183,15 +187,15 @@ model todo {
 }
 
 model Item {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(20)
-  item_code  String    @db.VarChar(20) @default("hsin")
-  item_type  String    @db.VarChar(20)
-  length     Float?
-  width      Float?
-  height     Float?
-  status     Boolean   @default(true)
-  deleted_at DateTime?
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(20)
+  item_code    String         @default("hsin") @db.VarChar(20)
+  item_type    String         @db.VarChar(20)
+  length       Float?
+  width        Float?
+  height       Float?
+  status       Boolean        @default(true)
+  deleted_at   DateTime?
   bill_details bill_details[]
 }
 
@@ -201,38 +205,57 @@ enum bill_type {
 }
 
 model bills {
-  id         Int       @id @default(autoincrement())
-  user_id         Int
-  users           users            @relation("bill_for_user", fields: [user_id], references: [id])
-  user_object     Json
-  city  String
-  contact_number  String
-  item_type String
-  item_object Json
-  invoice_date  DateTime
-  total Int
-  total_typewise Json
-  bill_type bill_type 
-  created_at      DateTime @default(now())
-  created_by_user Int
-  createdByUser   users    @relation("bill_created_by", fields: [created_by_user], references: [id])
-  deleted_at      DateTime?
-  deleted_by_user Int?
-  deletedByUser   users?    @relation("bill_deleted_by", fields: [deleted_by_user], references: [id])
-  bill_details  bill_details[]
+  id                Int                 @id @default(autoincrement())
+  user_id           Int
+  users             users               @relation("bill_for_user", fields: [user_id], references: [id])
+  user_object       Json
+  city              String
+  contact_number    String
+  item_type         String
+  item_object       Json
+  invoice_date      DateTime
+  total             Int
+  total_typewise    Json
+  bill_type         bill_type
+  created_at        DateTime            @default(now())
+  created_by_user   Int
+  createdByUser     users               @relation("bill_created_by", fields: [created_by_user], references: [id])
+  deleted_at        DateTime?
+  deleted_by_user   Int?
+  deletedByUser     users?              @relation("bill_deleted_by", fields: [deleted_by_user], references: [id])
+  bill_details      bill_details[]
+  account_statement account_statement[]
 }
 
-model bill_details{
-  bill_id Int
-  bills bills @relation(fields: [bill_id], references: [id])
-  item_id Int
-  items Item @relation(fields: [item_id],references: [id])
+model bill_details {
+  bill_id     Int
+  bills       bills   @relation(fields: [bill_id], references: [id])
+  item_id     Int
+  items       Item    @relation(fields: [item_id], references: [id])
   item_object Json?
-  size Int?
-  piece Int
-  rate Int
-  remark String?
-  sub_items Json?
+  size        Int?
+  piece       Int
+  rate        Int
+  remark      String?
+  sub_items   Json?
 
   @@unique([bill_id, item_id])
+}
+
+model account_statement {
+  created_for      Int
+  created_for_user users            @relation(fields: [created_for], references: [id])
+  company_id       Int
+  bill_id          Int?
+  bills            bills?           @relation(fields: [bill_id], references: [id])
+  transaction_id   Int?
+  transaction      transaction?     @relation(fields: [transaction_id], references: [id])
+  statement        String
+  amount           Int
+  transaction_type transaction_type
+  created_at       DateTime         @default(now())
+  created_by_user  Int
+  createdByUser    users            @relation("statement_created_by", fields: [created_by_user], references: [id])
+
+  @@unique([created_for, company_id, created_at])
 }

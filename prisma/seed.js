@@ -111,7 +111,7 @@ async function main() {
 
   // users
   await prisma.users.upsert({
-    where: { user_name: 'sumeet' },
+    where: { name: 'sumeet' },
     update: {},
     create: {
       name: 'sumeet',
@@ -132,7 +132,7 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'pratiek' },
+    where: { name: 'pratiek' },
     update: {},
     create: {
       name: 'pratiek',
@@ -153,7 +153,7 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'customer1' },
+    where: { name: 'customer1' },
     update: {},
     create: {
       name: 'Customer 1',
@@ -174,7 +174,7 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'customer2' },
+    where: { name: 'customer2' },
     update: {},
     create: {
       name: 'Customer 2',
@@ -195,7 +195,7 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'employee_operator' },
+    where: { name: 'employee_operator' },
     update: {},
     create: {
       name: 'Employee Operator',
@@ -216,7 +216,7 @@ async function main() {
   });
 
   await prisma.users.upsert({
-    where: { user_name: 'employee_normal' },
+    where: { name: 'employee_normal' },
     update: {},
     create: {
       name: 'Employee Normal',

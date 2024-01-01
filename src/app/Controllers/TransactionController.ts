@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
+import { getCurrentDate } from '../../utils/dateTimeConversions';
 import { successResponse } from '../../utils/helpers';
 import { storeRequest } from '../FormValidators/TransactionFormValidator';
+import AccountStatementService from '../Services/AccountStatementService';
 import AuthService from '../Services/AuthService';
 import TransactionService from '../Services/TransactionService';
 import UserBalanceService from '../Services/UserBalanceService';
@@ -19,6 +21,7 @@ const index = async (req: Request, res: Response, next: any) => {
     return next(error);
   }
 };
+
 const store = async (req: Request, res: Response, next: any) => {
   try {
     const { headers } = req;
@@ -42,7 +45,21 @@ const store = async (req: Request, res: Response, next: any) => {
       // save transaction data
       const transactionResult = await TransactionService.storeTransaction(validationResult, userBalanceDetail, tx);
 
-      return transactionResult;
+      // add details in account statement
+      const accountStatementBody = {
+        created_for: parseInt(validationResult.user_id),
+        company_id: parseInt(validationResult.company_id),
+        transaction_id: parseInt(transactionResult.transactionResult.id),
+        statement: `Transaction Id: #${transactionResult.transactionResult.id}`,
+        amount: parseFloat(transactionResult.transactionResult.amount),
+        transaction_type: validationResult.type,
+        created_at: getCurrentDate(),
+        created_by_user: validationResult.created_by,
+      };
+
+      const accountStatement = await AccountStatementService.store(accountStatementBody, tx);
+
+      return { transactionResult, accountStatement };
     });
 
     return res.json(successResponse({ result }));
@@ -64,11 +81,14 @@ const destroy = async (req: Request, res: Response, next: any) => {
     // update delete_at && deleted_by in transaction and upate user_balance amount
     const deleteTransaction = await TransactionService.deleteTransaction(userBalanceDetail, loggingUser);
 
+    await AccountStatementService.deleteByTransactionId(parseInt(params.id));
+
     return res.json(successResponse(deleteTransaction));
   } catch (error: any) {
     return next(new createHttpError.InternalServerError(error.message));
   }
 };
+
 export default {
   index,
   store,
