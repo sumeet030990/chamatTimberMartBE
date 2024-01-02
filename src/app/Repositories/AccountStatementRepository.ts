@@ -31,8 +31,17 @@ const fetchAllAccountStatements = async (queryParams: any) => {
       };
     }
 
-    const lessStartDate = subtractDateByDays(startDate, 1);
-    const greaterEndDate = addDateByDays(endDate, 1);
+    let createdAtFilter = {};
+    if (startDate !== '' && endDate !== '') {
+      const lessStartDate = subtractDateByDays(startDate, 1);
+      const greaterEndDate = addDateByDays(endDate, 1);
+      createdAtFilter = {
+        created_at: {
+          gt: lessStartDate,
+          lt: greaterEndDate,
+        },
+      };
+    }
 
     let createdForFilter = {};
     if (user) {
@@ -43,10 +52,7 @@ const fetchAllAccountStatements = async (queryParams: any) => {
     const result = await prisma.account_statement.findMany({
       where: {
         company_id: parseInt(selectedCompany),
-        created_at: {
-          gt: lessStartDate,
-          lt: greaterEndDate,
-        },
+        ...createdAtFilter,
         ...createdForFilter,
       },
       select: {
