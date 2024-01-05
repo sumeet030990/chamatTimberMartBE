@@ -123,6 +123,16 @@ const convertSnakeCaseToTitleCase = (s: String) => {
     .replace(/[-_]+(.)/g, (_, c) => ` ${c.toUpperCase()}`); // First char after each -/_
 };
 
+const parseNumberToAmountString = (amount: number | string) => {
+  if (amount === 0) {
+    return '0';
+  }
+  if (typeof amount === 'number') {
+    return amount.toFixed(2);
+  }
+
+  return parseFloat(amount).toFixed(2);
+};
 export {
   successResponse,
   errorResponse,
@@ -132,4 +142,5 @@ export {
   formatDataForDropdown,
   getAuthUserFromHeaders,
   convertSnakeCaseToTitleCase,
+  parseNumberToAmountString,
 };

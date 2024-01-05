@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
+import { isNull } from 'lodash';
+import { CREDIT, DEBIT } from '../../utils/constant';
 import { addDateByDays, subtractDateByDays } from '../../utils/dateTimeConversions';
+import { parseNumberToAmountString } from '../../utils/helpers';
 
 const prisma = new PrismaClient();
 
@@ -84,7 +87,39 @@ const fetchAllAccountStatements = async (queryParams: any) => {
       },
     });
 
-    const count = await prisma.account_statement.count({});
+    const count = await prisma.account_statement.count({
+      where: {
+        company_id: parseInt(selectedCompany),
+        ...createdAtFilter,
+        ...createdForFilter,
+      },
+    });
+
+    const creditCashObj = await prisma.account_statement.aggregate({
+      where: {
+        company_id: parseInt(selectedCompany),
+        ...createdAtFilter,
+        ...createdForFilter,
+        transaction_type: CREDIT,
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const debitCashObj = await prisma.account_statement.aggregate({
+      where: {
+        company_id: parseInt(selectedCompany),
+        ...createdAtFilter,
+        ...createdForFilter,
+        transaction_type: DEBIT,
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    const creditCashAmount = isNull(creditCashObj._sum.amount) ? 0 : creditCashObj._sum.amount;
+    const debitCashAmount = isNull(debitCashObj._sum.amount) ? 0 : debitCashObj._sum.amount;
 
     return {
       page: pageNumber,
@@ -92,6 +127,9 @@ const fetchAllAccountStatements = async (queryParams: any) => {
       total_records: count,
       total_page: Math.ceil(count / pageSize),
       data: result,
+      creditCashAmount: parseNumberToAmountString(creditCashAmount),
+      debitCashAmount: parseNumberToAmountString(debitCashAmount),
+      totalCash: parseNumberToAmountString(debitCashAmount - creditCashAmount),
     };
   } catch (error: any) {
     throw new createHttpError.InternalServerError(error.message);
