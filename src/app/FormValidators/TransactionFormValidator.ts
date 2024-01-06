@@ -10,8 +10,8 @@ const transactionObject = {
   company_id: Joi.number().required(),
   note: Joi.string().allow(''),
   custom_user_obj: Joi.array(),
-  city: Joi.string(),
-  contact_details: Joi.string(),
+  city: Joi.string().allow(''),
+  contact_details: Joi.string().allow(''),
 };
 
 const storeRequest = Joi.object({
