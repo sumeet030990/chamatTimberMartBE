@@ -14,8 +14,10 @@ import UserService from '../Services/UserService';
 const generateAccessAndRefreshToken = async (userData: any) => {
   try {
     const filteredUserData = removeProtectedFieldsFromData(userData, ['password']); // remove protected fields from user data
+    console.log('filteredUserData: ', filteredUserData);
     if (!filteredUserData) throw new createHttpError.InternalServerError();
 
+    console.log('accessToken: ');
     const accessToken = await AuthService.createAccessToken(filteredUserData);
 
     return { accessToken };
@@ -30,7 +32,7 @@ const generateAccessAndRefreshToken = async (userData: any) => {
  * @param next
  * @returns
  */
-const login = async (req: Request, res: Response, next: any): Promise<Response> => {
+const login = async (req: Request, res: Response): Promise<Response> => {
   try {
     const validationResult = await loginRequest.validateAsync(req.body);
     const { userName, password } = validationResult; // ll use sanitized data after validation
@@ -56,7 +58,7 @@ const login = async (req: Request, res: Response, next: any): Promise<Response> 
     console.log('error: ', error);
     console.log('error.message: ', error.message);
 
-    return next(error);
+    throw new createHttpError.UnprocessableEntity(error.message);
   }
 };
 
