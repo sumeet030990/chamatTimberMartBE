@@ -33,6 +33,13 @@ const fetchAllAccountStatements = async (queryParams: any) => {
         },
       };
     }
+    if (sort_field === 'transaction.payment_mode') {
+      sortField = {
+        transaction: {
+          payment_mode: sort_order,
+        },
+      };
+    }
 
     let createdAtFilter = {};
     if (startDate !== '' && endDate !== '') {
@@ -40,8 +47,8 @@ const fetchAllAccountStatements = async (queryParams: any) => {
       const greaterEndDate = addDateByDays(endDate, 1);
       createdAtFilter = {
         created_at: {
-          gt: lessStartDate,
-          lt: greaterEndDate,
+          gte: lessStartDate,
+          lte: greaterEndDate,
         },
       };
     }
@@ -52,6 +59,15 @@ const fetchAllAccountStatements = async (queryParams: any) => {
         created_for: parseInt(user),
       };
     }
+
+    let pageSizeCondition: any = {
+      skip: Number((pageNumber - 1) * pageSize),
+      take: Number(pageSize),
+    };
+    if (pageSize === 'all') {
+      pageSizeCondition = {};
+    }
+
     const result = await prisma.account_statement.findMany({
       where: {
         company_id: parseInt(selectedCompany),
@@ -80,11 +96,10 @@ const fetchAllAccountStatements = async (queryParams: any) => {
           },
         },
       },
-      skip: Number((pageNumber - 1) * pageSize),
-      take: Number(pageSize),
       orderBy: {
         ...sortField,
       },
+      ...pageSizeCondition,
     });
 
     const count = await prisma.account_statement.count({
@@ -123,9 +138,9 @@ const fetchAllAccountStatements = async (queryParams: any) => {
 
     return {
       page: pageNumber,
-      size: pageSize,
+      size: pageSize !== 'all' ? pageSize : count,
       total_records: count,
-      total_page: Math.ceil(count / pageSize),
+      total_page: pageSize !== 'all' ? Math.ceil(count / pageSize) : 1,
       data: result,
       creditCashAmount: parseNumberToAmountString(creditCashAmount),
       debitCashAmount: parseNumberToAmountString(debitCashAmount),
