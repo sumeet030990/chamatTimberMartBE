@@ -45,6 +45,7 @@ const verifyPassword = async (userData: any, password: string): Promise<boolean>
  */
 const createAccessToken = (userData: any): Promise<string | undefined> => {
   const privateKey = fs.readFileSync(`${fileDir}/id_rsa_priv.pem`, { encoding: 'utf8' });
+  console.log('privateKey: ', privateKey);
 
   return new Promise((resolve, reject) => {
     const payload = { userData };
