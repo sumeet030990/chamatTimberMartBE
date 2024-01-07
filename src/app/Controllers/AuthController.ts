@@ -50,6 +50,8 @@ const login = async (req: Request, res: Response, next: any): Promise<Response> 
 
     return res.json(successResponse({ accessToken, userData: filteredUserData }));
   } catch (error: any) {
+    console.log('error: ', error.message);
+
     return next(error);
   }
 };
