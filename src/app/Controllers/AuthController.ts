@@ -37,20 +37,24 @@ const login = async (req: Request, res: Response, next: any): Promise<Response> 
 
     // Find User
     const userData = await UserService.fetchUserByUserName(userName, { allowLogin: false });
+    console.log('userData: ', userData);
     if (isNull(userData)) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Check if Password is correct
     const isValidPassword = await AuthService.verifyPassword(userData, password);
+    console.log('isValidPassword: ', isValidPassword);
     if (!isValidPassword) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Create Access and Refresh Token
     const { accessToken } = await generateAccessAndRefreshToken(userData);
+    console.log('accessToken: ', accessToken);
 
     const filteredUserData = removeProtectedFieldsFromData(userData, ['password']);
 
     return res.json(successResponse({ accessToken, userData: filteredUserData }));
   } catch (error: any) {
-    console.log('error: ', error.message);
+    console.log('error: ', error);
+    console.log('error.message: ', error.message);
 
     return next(error);
   }
