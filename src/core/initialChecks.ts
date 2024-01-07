@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path from 'path';
+// import path from 'path';
 
 /**
  * check if public and private is present or not
@@ -7,17 +7,17 @@ import path from 'path';
  * node src/utils/generatePublicPrivateKeys.ts
  * from project root directory
  */
-const checkForPublicPrivateKeys = () => {
-  const fileDir = path.join(__dirname, '../');
-  const privateKey = fs.existsSync(`${fileDir}/id_rsa_priv.pem`);
-  const publicKey = fs.existsSync(`${fileDir}/id_rsa_pub.pem`);
+// const checkForPublicPrivateKeys = () => {
+//   const fileDir = path.join(__dirname, '../');
+//   const privateKey = fs.existsSync(`${fileDir}/id_rsa_priv.pem`);
+//   const publicKey = fs.existsSync(`${fileDir}/id_rsa_pub.pem`);
 
-  if (!privateKey && !publicKey) {
-    // eslint-disable-next-line no-console
-    console.error('Public or Private key is not present. Stopping the app!!');
-    process.exit(0);
-  }
-};
+//   if (!privateKey && !publicKey) {
+//     // eslint-disable-next-line no-console
+//     console.error('Public or Private key is not present. Stopping the app!!');
+//     process.exit(0);
+//   }
+// };
 
 const checkForAccessTokenSecretKey = () => {
   if (!process.env.ACCESS_TOKEN_SECRET) {
@@ -48,7 +48,7 @@ const checkForUploadDirectories = () => {
 };
 // check for necessary information which are required to run app
 const initialChecks = () => {
-  checkForPublicPrivateKeys(); // check if public and private is present or not
+  // checkForPublicPrivateKeys(); // check if public and private is present or not
   checkForAccessTokenSecretKey(); // check if refresh token is exist
   checkForUploadDirectories(); //  check for important directories are available or not
 };
