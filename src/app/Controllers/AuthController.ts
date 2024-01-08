@@ -14,10 +14,8 @@ import UserService from '../Services/UserService';
 const generateAccessAndRefreshToken = async (userData: any) => {
   try {
     const filteredUserData = removeProtectedFieldsFromData(userData, ['password']); // remove protected fields from user data
-    console.log('filteredUserData: ', filteredUserData);
     if (!filteredUserData) throw new createHttpError.InternalServerError();
 
-    console.log('accessToken: ');
     const accessToken = await AuthService.createAccessToken(filteredUserData);
 
     return { accessToken };
@@ -39,25 +37,19 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 
     // Find User
     const userData = await UserService.fetchUserByUserName(userName, { allowLogin: false });
-    console.log('userData: ', userData);
     if (isNull(userData)) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Check if Password is correct
     const isValidPassword = await AuthService.verifyPassword(userData, password);
-    console.log('isValidPassword: ', isValidPassword);
     if (!isValidPassword) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Create Access and Refresh Token
     const { accessToken } = await generateAccessAndRefreshToken(userData);
-    console.log('accessToken: ', accessToken);
 
     const filteredUserData = removeProtectedFieldsFromData(userData, ['password']);
 
     return res.json(successResponse({ accessToken, userData: filteredUserData }));
   } catch (error: any) {
-    console.log('error: ', error);
-    console.log('error.message: ', error.message);
-
     throw new createHttpError.UnprocessableEntity(error.message);
   }
 };
