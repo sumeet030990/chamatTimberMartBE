@@ -1,13 +1,9 @@
 import bcrypt from 'bcrypt';
-import fs from 'fs';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
 import { isEmpty } from 'lodash';
-import path from 'path';
 import { ACCESS_TOKEN_EXPIRES_IN } from '../../utils/constant';
 import UserRepository from '../Repositories/UserRepository';
-
-const fileDir = path.join(__dirname, '../../');
 
 /**
  * Hash password string
@@ -37,24 +33,53 @@ const verifyPassword = async (userData: any, password: string): Promise<boolean>
   }
 };
 
-/**
- * Create Access Token with the help of Public Private key
- *
- * @param userData User
- * @returns string
- */
-const createAccessToken = (userData: any): Promise<string | undefined> => {
-  const privateKey = fs.readFileSync(`${fileDir}/id_rsa_priv.pem`, { encoding: 'utf8' });
+// /**
+//  * Create Access Token with the help of Public Private key
+//  *
+//  * @param userData User
+//  * @returns string
+//  */
+// const createAccessToken = (userData: any): Promise<string | undefined> => {
+//   const privateKey = fs.readFileSync(`${fileDir}/id_rsa_priv.pem`, { encoding: 'utf8' });
 
+//   return new Promise((resolve, reject) => {
+//     const payload = { userData };
+//     try {
+//       jwt.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: ACCESS_TOKEN_EXPIRES_IN }, (err, token) => {
+//         if (err || isEmpty(token)) return reject(new createHttpError.InternalServerError());
+
+//         return resolve(token);
+//       });
+//     } catch (error: any) {
+//       throw new createHttpError.InternalServerError('Oops Something went wrong');
+//     }
+//   });
+// };
+
+// const verifyAccessToken = (token: string) => {
+//   try {
+//     const publicKey = fs.readFileSync(`${fileDir}/id_rsa_pub.pem`, { encoding: 'utf8' });
+//     const payload = jwt.verify(token, publicKey, { algorithms: ['RS256'] });
+
+//     return payload;
+//   } catch (error) {
+//     throw new createHttpError.Unauthorized();
+//   }
+// };
+
+const createAccessToken = (userData: any): Promise<string | undefined> => {
   return new Promise((resolve, reject) => {
     const payload = { userData };
     try {
-      jwt.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: ACCESS_TOKEN_EXPIRES_IN }, (err, token) => {
-        if (err || isEmpty(token)) return reject(new createHttpError.InternalServerError());
+      if (process.env.ACCESS_TOKEN_SECRET) {
+        jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRES_IN }, (err, token) => {
+          if (err || isEmpty(token)) return reject(new createHttpError.InternalServerError());
 
-        return resolve(token);
-      });
+          return resolve(token);
+        });
+      }
     } catch (error: any) {
+      console.log('error: ', error.message);
       throw new createHttpError.InternalServerError('Oops Something went wrong');
     }
   });
@@ -62,10 +87,11 @@ const createAccessToken = (userData: any): Promise<string | undefined> => {
 
 const verifyAccessToken = (token: string) => {
   try {
-    const publicKey = fs.readFileSync(`${fileDir}/id_rsa_pub.pem`, { encoding: 'utf8' });
-    const payload = jwt.verify(token, publicKey, { algorithms: ['RS256'] });
+    if (process.env.ACCESS_TOKEN_SECRET) {
+      const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    return payload;
+      return payload;
+    }
   } catch (error) {
     throw new createHttpError.Unauthorized();
   }
