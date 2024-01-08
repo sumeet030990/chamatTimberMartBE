@@ -11,11 +11,19 @@ const checkForPublicPrivateKeys = () => {
   const fileDir = path.join(__dirname, '../');
   const privateKey = fs.existsSync(`${fileDir}/id_rsa_priv.pem`);
   const publicKey = fs.existsSync(`${fileDir}/id_rsa_pub.pem`);
+  console.log('fileDir: ', fileDir);
+  console.log('publicKey: ', publicKey);
+  console.log('privateKey: ', privateKey);
+  const allFilesDir = fs
+    .readdirSync(fileDir, { withFileTypes: true })
+    .filter(item => !item.isDirectory())
+    .map(item => item.name);
+  console.log('allFilesDir: ', allFilesDir);
 
   if (!privateKey && !publicKey) {
     // eslint-disable-next-line no-console
     console.error('Public or Private key is not present. Stopping the app!!');
-    process.exit(0);
+    // process.exit(0);
   }
 };
 
