@@ -14,7 +14,17 @@ const prisma = new PrismaClient();
  */
 const fetchAllAccountStatements = async (queryParams: any) => {
   try {
-    const { pageNumber, pageSize, sort_field, sort_order, selectedCompany, user, startDate, endDate } = queryParams;
+    const {
+      pageNumber,
+      pageSize,
+      sort_field,
+      sort_order,
+      selectedCompany,
+      user,
+      startDate,
+      endDate,
+      onlyTransactions,
+    } = queryParams;
 
     let sortField: any = {
       [sort_field]: sort_order,
@@ -68,11 +78,22 @@ const fetchAllAccountStatements = async (queryParams: any) => {
       pageSizeCondition = {};
     }
 
+    let fetchOnlyTransactionsRecordFilter = {};
+
+    if (onlyTransactions === 'true') {
+      fetchOnlyTransactionsRecordFilter = {
+        transaction_id: {
+          not: null,
+        },
+      };
+    }
+
     const result = await prisma.account_statement.findMany({
       where: {
         company_id: parseInt(selectedCompany),
         ...createdAtFilter,
         ...createdForFilter,
+        ...fetchOnlyTransactionsRecordFilter,
       },
       select: {
         created_for_user: {

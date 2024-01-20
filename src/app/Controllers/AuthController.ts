@@ -41,7 +41,6 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 
     // Check if Password is correct
     const isValidPassword = await AuthService.verifyPassword(userData, password);
-    console.log('isValidPassword: ', isValidPassword);
     if (!isValidPassword) throw new createHttpError.Unauthorized('Invalid username or password');
 
     // Create Access and Refresh Token

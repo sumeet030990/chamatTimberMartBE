@@ -79,7 +79,6 @@ const createAccessToken = (userData: any): Promise<string | undefined> => {
         });
       }
     } catch (error: any) {
-      console.log('error: ', error.message);
       throw new createHttpError.InternalServerError('Oops Something went wrong');
     }
   });
