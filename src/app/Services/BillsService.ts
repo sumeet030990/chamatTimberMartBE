@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import BillDetailService from './BillDetailService';
 import { fetchQueryParamsType } from '../../types/commons';
-import { convertDateStringToDate, getCurrentDate } from '../../utils/dateTimeConversions';
+import { convertDateStringToDate, convertDateToISOString, getCurrentDate } from '../../utils/dateTimeConversions';
 import BillsDetailRepository from '../Repositories/BillsDetailRepository';
 import BillsRepository from '../Repositories/BillsRepository';
 
@@ -46,7 +46,7 @@ const formatBillData = (billData: any, savedUser: any) => {
     total_typewise: billData.total,
     bill_type: billData.type,
     bill_remark: billData.bill_remark,
-    created_at: getCurrentDate(),
+    created_at: convertDateToISOString(getCurrentDate()),
     created_by_user: billData.created_by,
   };
 };

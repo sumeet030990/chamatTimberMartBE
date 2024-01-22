@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { isNull } from 'lodash';
-import { getCurrentDate } from '../../utils/dateTimeConversions';
+import { convertDateToISOString, getCurrentDate } from '../../utils/dateTimeConversions';
 import { successResponse } from '../../utils/helpers';
 import { storeRequest } from '../FormValidators/TransactionFormValidator';
 import AccountStatementService from '../Services/AccountStatementService';
@@ -96,7 +96,7 @@ const store = async (req: Request, res: Response, next: any) => {
         statement: `Transaction Id: #${transactionResult.transactionResult.id}`,
         amount: parseFloat(transactionResult.transactionResult.amount),
         transaction_type: validationResult.type,
-        created_at: getCurrentDate(),
+        created_at: convertDateToISOString(getCurrentDate()),
         created_by_user: validationResult.created_by,
       };
 

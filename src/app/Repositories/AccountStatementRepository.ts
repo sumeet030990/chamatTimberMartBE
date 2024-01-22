@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import createHttpError from 'http-errors';
 import { isNull } from 'lodash';
 import { CREDIT, DEBIT } from '../../utils/constant';
-import { addDateByDays, subtractDateByDays } from '../../utils/dateTimeConversions';
+import { convertDateToISOString } from '../../utils/dateTimeConversions';
 import { parseNumberToAmountString } from '../../utils/helpers';
 
 const prisma = new PrismaClient();
@@ -53,16 +53,16 @@ const fetchAllAccountStatements = async (queryParams: any) => {
 
     let createdAtFilter = {};
     if (startDate !== '' && endDate !== '') {
-      const lessStartDate = subtractDateByDays(startDate, 1);
-      const greaterEndDate = addDateByDays(endDate, 1);
+      const startDateConverted = convertDateToISOString(startDate);
+      const endDateConverted = convertDateToISOString(endDate, true);
+
       createdAtFilter = {
         created_at: {
-          gte: lessStartDate,
-          lte: greaterEndDate,
+          gte: startDateConverted,
+          lte: endDateConverted,
         },
       };
     }
-
     let createdForFilter = {};
     if (user) {
       createdForFilter = {
@@ -128,6 +128,7 @@ const fetchAllAccountStatements = async (queryParams: any) => {
         company_id: parseInt(selectedCompany),
         ...createdAtFilter,
         ...createdForFilter,
+        ...fetchOnlyTransactionsRecordFilter,
       },
     });
 
@@ -136,6 +137,7 @@ const fetchAllAccountStatements = async (queryParams: any) => {
         company_id: parseInt(selectedCompany),
         ...createdAtFilter,
         ...createdForFilter,
+        ...fetchOnlyTransactionsRecordFilter,
         transaction_type: CREDIT,
       },
       _sum: {
@@ -148,6 +150,7 @@ const fetchAllAccountStatements = async (queryParams: any) => {
         company_id: parseInt(selectedCompany),
         ...createdAtFilter,
         ...createdForFilter,
+        ...fetchOnlyTransactionsRecordFilter,
         transaction_type: DEBIT,
       },
       _sum: {
