@@ -165,6 +165,7 @@ CREATE TABLE `bills` (
     `total_typewise` JSON NOT NULL,
     `bill_type` ENUM('whole_sale_bill', 'retail') NOT NULL,
     `bill_remark` VARCHAR(191) NULL,
+    `transaction_id` INTEGER NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `created_by_user` INTEGER NOT NULL,
     `deleted_at` DATETIME(3) NULL,
@@ -253,6 +254,9 @@ ALTER TABLE `todo` ADD CONSTRAINT `todo_created_by_user_fkey` FOREIGN KEY (`crea
 
 -- AddForeignKey
 ALTER TABLE `bills` ADD CONSTRAINT `bills_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `bills` ADD CONSTRAINT `bills_transaction_id_fkey` FOREIGN KEY (`transaction_id`) REFERENCES `transaction`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `bills` ADD CONSTRAINT `bills_created_by_user_fkey` FOREIGN KEY (`created_by_user`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

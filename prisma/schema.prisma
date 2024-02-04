@@ -173,6 +173,7 @@ model transaction {
   deleted_by        Int?
   deletedByUser     users?              @relation("transaction_deleted_by", fields: [deleted_by], references: [id])
   account_statement account_statement[]
+  bills             bills[]
 }
 
 model todo {
@@ -218,6 +219,8 @@ model bills {
   total_typewise    Json
   bill_type         bill_type
   bill_remark       String?
+  transaction_id    Int?
+  transactions      transaction?        @relation(fields: [transaction_id], references: [id])
   created_at        DateTime            @default(now())
   created_by_user   Int
   createdByUser     users               @relation("bill_created_by", fields: [created_by_user], references: [id])

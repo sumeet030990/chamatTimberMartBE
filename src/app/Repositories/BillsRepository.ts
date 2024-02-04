@@ -101,6 +101,9 @@ const findById = async (id: string) => {
       where: {
         id: Number(id),
       },
+      include: {
+        transactions: true,
+      },
     });
 
     return result;
@@ -169,6 +172,31 @@ const deleteBill = async (companyId: string) => {
     throw new createHttpError.InternalServerError(error.message);
   }
 };
+
+/**
+ * Update Bill in DB
+ *
+ * @param companyId string
+ * @param loggedInUser string
+ * @returns
+ */
+const updateTransactionIdInBill = async (transactionId: number, billId: number, prismaTx: any) => {
+  try {
+    const updateResult = await prismaTx.bills.update({
+      where: {
+        id: billId,
+      },
+      data: {
+        transaction_id: transactionId,
+      },
+    });
+
+    return updateResult;
+  } catch (error: any) {
+    throw new createHttpError.InternalServerError(error.message);
+  }
+};
+
 export default {
   fetchAllBills,
   fetchAllBillsDataForDropdown,
@@ -176,4 +204,5 @@ export default {
   storeBill,
   updateBill,
   deleteBill,
+  updateTransactionIdInBill,
 };

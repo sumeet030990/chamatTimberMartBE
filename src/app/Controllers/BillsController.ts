@@ -195,6 +195,13 @@ const store = async (req: Request, res: Response, next: any) => {
         tx,
       );
 
+      // step 8: update transaction id in bill
+      await BillsService.updateTransactionIdInBill(
+        parseInt(transactionResult.transactionResult.id),
+        parseInt(saveBill.billResult.id),
+        tx,
+      );
+
       return {
         savedUser,
         saveBill,

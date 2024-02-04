@@ -109,10 +109,15 @@ const deleteBill = (userId: string) => {
   return BillsRepository.deleteBill(userId);
 };
 
+const updateTransactionIdInBill = (transactionId: number, billId: number, prismaTx: any) => {
+  return BillsRepository.updateTransactionIdInBill(transactionId, billId, prismaTx);
+};
+
 export default {
   fetchAllBills,
   findById,
   storeBill,
   updateBill,
   deleteBill,
+  updateTransactionIdInBill,
 };
