@@ -20,6 +20,7 @@ const itemSchema = Joi.object().keys({
     }),
   ),
   size: Joi.string().allow('').required(),
+  bundle: Joi.string().allow(''),
   piece: Joi.string().allow('').required(),
   rate: Joi.string().allow('').required(),
   remark: Joi.string().allow('').required(),

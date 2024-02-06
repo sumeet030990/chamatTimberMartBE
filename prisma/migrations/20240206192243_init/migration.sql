@@ -163,7 +163,7 @@ CREATE TABLE `bills` (
     `invoice_date` DATETIME(3) NOT NULL,
     `total` INTEGER NOT NULL,
     `total_typewise` JSON NOT NULL,
-    `bill_type` ENUM('whole_sale_bill', 'retail') NOT NULL,
+    `bill_type` ENUM('whole_sale_bill', 'retail_bill') NOT NULL,
     `bill_remark` VARCHAR(191) NULL,
     `transaction_id` INTEGER NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

@@ -202,7 +202,7 @@ model Item {
 
 enum bill_type {
   whole_sale_bill
-  retail
+  retail_bill
 }
 
 model bills {
