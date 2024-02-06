@@ -7,7 +7,6 @@
     "start": "node dist/index.js",
     "dev": "export NODE_ENV=localhost && nodemon src/index.ts",
     "build": "npm install && tsc -p .",
-    "prepare": "husky install",
     "lint": "eslint . --ext .ts --ext .js",
     "lint:fix": "eslint --fix . --ext .ts --ext .js",
     "db:refresh": "npx prisma migrate reset -f && npx prisma migrate dev --name init && node prisma/seed.js",

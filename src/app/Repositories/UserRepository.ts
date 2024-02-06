@@ -134,6 +134,11 @@ const fetchUserByUserName = async (userName: string, otherfilterParams?: fetchUs
             },
           },
         },
+        user_role: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
